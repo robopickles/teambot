@@ -1,0 +1,24 @@
+{{ title }}
+{% if from_date == to_date %}
+    for {{ from_date }}
+{% else %}
+    from {{ from_date }} to {{ to_date }}
+{% endif %}
+<br>
+<br>
+<table>
+    <thead>
+    <tr>
+        <th>User</th>
+        <th>Hours</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for u in users %}
+        <tr>
+            <td>{{ u }}</td>
+            <td>{{ u.total_hours|floatformat }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

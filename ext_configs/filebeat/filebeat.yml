@@ -1,0 +1,20 @@
+output:
+  logstash:
+    enabled: true
+    hosts:
+      - '${KIBANA_URL}'
+    tls:
+      insecure: true
+    timeout: 15
+    index: fbeat
+
+filebeat:
+  prospectors:
+    -
+      paths:
+        - "/var/log/teambot/*.log"
+      document_type: raw
+      fields:
+        HOST_TYPE: 'teambot'
+        CONTAINER_TYPE: 'teambot'
+      fields_under_root: true

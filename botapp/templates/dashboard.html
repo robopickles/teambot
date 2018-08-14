@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Teambot Dashboard{% endblock title %}
+
+{% block content %}
+    <form class="form-inline" action="/">
+        <div class="form-group">
+            {{ form }}
+        </div>
+        <button type="submit" class="btn btn-default">Submit</button>
+    </form>
+
+    {% for report in reports %}
+        <h4>{{ report.user_profile.name }}</h4>
+        <p>
+            {{ report.tracker_chart|safe }}
+            {{ report.gitlab_chart|safe }}
+        </p>
+        <table class="table">
+            <tr>
+                <th>Date</th>
+                <th>Worklog</th>
+                <th>Hours</th>
+                <th>Gitlab</th>
+                <th>Changes</th>
+            </tr>
+            {% for d in report.summary %}
+                <tr {% if d.is_weekend %}class="warning"{% endif %}>
+
+                    <td>{{ d.date|date:"D d M Y" }}</td>
+                    <td>
+                        <table class="table-condensed">
+                            {% for w in d.tracker_grouped_worklogs %}
+                                <tr {% if d.is_weekend %}class="warning"{% endif %}>
+                                    <td>
+                                        {% if w.issue %}
+                                            <a target="_blank"
+                                               href="{{ w.issue.get_admin_url }}">
+                                                {{ w.issue.issue_id }}
+                                            </a>
+                                            {{ w.issue.title }}
+                                        {% else %}
+                                            {{ w.description }}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {{ w.hours|floatformat:"1" }}h
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </td>
+                    <td>
+                        {% if d.tracker_hours %}
+                            {{ d.tracker_hours|floatformat:"1"  }}h
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% for c in d.gitlab_commits %}
+                            {% if c.project.project_url %}
+                                <a target="_blank" href="{{ c.project.project_url }}/commit/{{ c.hash }}">
+                                    {{ c.short_id }}
+                                </a>
+                            {% else %}
+                                {{ c.short_id }}
+                            {% endif %}
+                            {% if c.issue %}
+                                <a target="_blank"
+                                   href="{{ issue.get_admin_url }}">
+                                    {{ c.title }}
+                                </a>
+                            {% else %}
+                                {{ c.title }}
+                            {% endif %}
+                            <br>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% if d.gitlab_adds or d.gitlab_dels %}
+                            +{{ d.gitlab_adds }}/{{ d.gitlab_dels }}
+                        {% endif %}
+                    </td>
+                </tr>
+
+            {% endfor %}
+        </table>
+    {% endfor %}
+
+{% endblock content %}

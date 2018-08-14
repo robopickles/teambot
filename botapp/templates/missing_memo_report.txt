@@ -1,0 +1,5 @@
+{{ title|default:""}}
+
+Total hours of tracked time without memo:
+{% for profile, time in timesheet %}{{ profile }}....{{ time|floatformat }}h
+{% endfor %}

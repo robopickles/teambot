@@ -1,0 +1,6 @@
+venv2/*
+venv/*
+*~
+*pyc
+db.sqlite3
+.idea/*
