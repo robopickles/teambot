@@ -32,7 +32,7 @@ app.conf.beat_schedule = {
     'daily-timesheet-report': {
         'task': 'botapp.tasks.send_report',
         'schedule': crontab(hour=5, minute=10),
-        'kwargs': {"slack_channel": "dev_management",
+        'kwargs': {"slack_channel": os.environ.get('SLACK_TIMESHEET_REPORT_CHANNEL'),
                    "yesterday": True,
                    "sync": True,
                    "output": "slack"}
@@ -45,7 +45,7 @@ app.conf.beat_schedule = {
         'kwargs': {"slack_color": "#a541d1",
                    "prev_week": True,
                    "sync": True,
-                   "slack_channel": "dev_management",
+                   "slack_channel": os.environ.get('SLACK_TIMESHEET_REPORT_CHANNEL'),
                    "output": "slack"}
     },
 
@@ -56,7 +56,7 @@ app.conf.beat_schedule = {
         'kwargs': {"slack_color": "#a541d1",
                    "last_days": 2,
                    "sync": True,
-                   "slack_channel": "development_ru",
+                   "slack_channel": os.environ.get('SLACK_ISSUES_REPORT_CHANNEL'),
                    "output": "slack"}
     },
 
@@ -67,7 +67,7 @@ app.conf.beat_schedule = {
         'kwargs': {"slack_color": "#a541d1",
                    "prev_week": True,
                    "sync": True,
-                   "slack_channel": "development_ru",
+                   "slack_channel": os.environ.get('SLACK_ISSUES_REPORT_CHANNEL'),
                    "output": "slack"}
     },
 
@@ -76,9 +76,11 @@ app.conf.beat_schedule = {
         'task': 'botapp.tasks.send_gitlab_scheduled_status',
         'schedule': crontab(hour=7, minute=0),
         'kwargs': {"project_id": '60',
-                   "project_url": 'https://git.gettipsi.com/tipsi_frontend/tipsi',
+
+                   # you need to use your own project URL here
+                   "project_url": os.environ.get('GITLAB_SCHEDULED_PROJECT_URL'),
                    "output": "slack",
-                   "slack_channel": "development_ru"}
+                   "slack_channel": os.environ.get('SLACK_ISSUES_REPORT_CHANNEL')}
     },
 
     # Report every minute into logs that teambot is still alive
