@@ -1,7 +1,0 @@
-image: $DOCKER_REGISTRY_URL/ci-runner:latest
-
-build_docker:
-  only:
-    - master
-  script:
-    - ./docker-build-push.sh

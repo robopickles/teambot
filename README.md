@@ -52,9 +52,32 @@ on what, and how many time in total was spent to the given task (development, co
 * Gitlab
 * Slack
 
-## Installation
+## Quick Installation
 
-1. Fork repository
+1. Put docker-compose.yml file in directory
 2. Setup environment variables
-3. Edit celery_app.py file to configure scheduled tasks
-4. Build and run Docker container
+3. Launch container docker-compose up
+4. Enter container docker exec -it teambot_web_1 /bin/bash
+5. Create table schema with command inside container "python3 manage.py migrate"
+6. Create super user inside container "python3 manage.py create"
+
+## Setting Up Teambot
+
+Once the web is live, you need to enter Django admin and setup team. In the following examples,
+web is linked to localhost, but you need to replace it with your real domain name
+
+### Create user profiles
+
+Go to that link http://localhost/admin/botapp/userprofile/add/ and populate user names and
+service accounts.
+Service types are upwork/sreenshot monitor (smon) or gitlab. UID - user id in the given service.
+
+Note: gitlab UID is email user specified in their GIT settings. It's also possible to add 
+several gitlab ids, if user pushes from different environments with different emails
+
+### Create default team
+
+At the moment only a single team is used, but it's still required to create a default team 
+entity to handle team members. If you don't add team member to the default team - it will
+be invisible in dashboard.
+
