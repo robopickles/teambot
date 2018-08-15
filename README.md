@@ -49,6 +49,7 @@ on what, and how many time in total was spent to the given task (development, co
 ## Integrations
 * Upwork
 * Screenshot Monitor
+* JIRA
 * Gitlab
 * Slack
 
