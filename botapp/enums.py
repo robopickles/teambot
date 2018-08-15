@@ -10,13 +10,13 @@ def get_enum_name(e, value):
 
 
 class ServiceType(IntEnum):
-    tipsi = 0
+    system = 0  # user id in your internal system
     upwork = 1
     hipchat = 2  # discontinued
     jira = 3
     gitlab = 4
     github = 5
-    smon = 6
+    smon = 6  # screenshot monitor user
 
 
 class IssueSystem(IntEnum):
