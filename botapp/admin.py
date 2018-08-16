@@ -105,8 +105,8 @@ class UpworkChangeList(ChangeList):
 
 @admin.register(Worklog)
 class WorklogAdmin(admin.ModelAdmin):
-    list_display = ['user', 'work_date', 'week_day', 'hours', 'description',
-                    'open_issue', 'issue_title', 'open_jira', 'original_estimate']
+    list_display = ['user', 'work_date', 'week_day', 'logged', 'orig_estimate', 'total', 'description',
+                    'open_issue', 'issue_title']
     exclude = ['user_id', 'user_name']
     list_filter = [WeekListFilter, 'user_profile']
     search_fields = ['description', 'issue__title']
@@ -135,26 +135,29 @@ class WorklogAdmin(admin.ModelAdmin):
             return ''
     open_issue.allow_tags = True
 
-    def open_jira(self, obj):
-        if obj.issue:
-            pattern = '<a href="{}" target="_blank">JIRA link: {}</a>'
-            return pattern.format(obj.issue.url, obj.issue.issue_id)
-        else:
-            return ''
-    open_jira.allow_tags = True
-
     def issue_title(self, obj):
         if obj.issue:
             return obj.issue.title
         else:
             return ''
 
-    def original_estimate(self, obj):
-        if obj.issue:
-            return obj.issue.original_estimate
+    def orig_estimate(self, obj):
+        if obj.issue and obj.issue.original_estimate:
+            return '{:.1f}h'.format(obj.issue.original_estimate)
 
     def week_day(self, obj):
         return obj.work_date.strftime('%A')
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        qs = qs.annotate(total=Sum('issue__worklog__hours'))
+        return qs
+
+    def total(self, obj):
+        return '-' if not obj.total else '{:.1f}h'.format(obj.total)
+
+    def logged(self, obj):
+        return '{:.1f}h'.format(obj.hours)
 
 
 class WorklogInline(admin.TabularInline):
