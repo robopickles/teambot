@@ -139,7 +139,7 @@ At the moment only a single team is used, but it's still required to create the
 entity in database, as it keeps references to team members.
 ![Create Default Team](https://github.com/Nepherhotep/teambot/blob/master/screenshots/create_default_team.png)
 
-### Create manager users
+### Create manager accounts
 
 Add managers here http://localhost/admin/auth/user/add/ - the users, who will have access to team statistics.
 There are two ways kind of permissions can be set for managers:
