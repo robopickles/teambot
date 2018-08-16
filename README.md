@@ -39,11 +39,18 @@ on what, and how many time in total was spent to the given task (development, co
 
 1. Show work log analytics per a developer or the full team in the given date/week
 2. Show total time spent for the given task
+![Total Time Spend](https://github.com/Nepherhotep/teambot/blob/master/screenshots/total_time_logged_chart.png)
+
 3. Worklog/Pushes charts per developers
+![Worklog/Pushes Chart](https://github.com/Nepherhotep/teambot/blob/master/screenshots/comparison_chart.png)
+
 4. Worklog/Pushes comparison table per developers
+![Comparison Table](https://github.com/Nepherhotep/teambot/blob/master/screenshots/comparison_table.png)
+
 5. Alert about empty reports directly into Slack
 6. Send worklog reports into Slack
 7. Send Gitlab scheduled tests status into Slack
+![Scheduled Tests](https://github.com/Nepherhotep/teambot/blob/master/screenshots/scheduled_tests_message.png)
 
 
 ## Integrations
@@ -79,7 +86,8 @@ several gitlab ids, if user pushes from different environments with different em
 
 ### Create default team
 
-At the moment only a single team is used, but it's still required to create a default team 
-entity to handle team members. If you don't add team member to the default team - it will
-be invisible in dashboard.
+At the moment only a single team is used, but it's still required to create the
+entity in database, as it keeps references to team members.
+![Create Default Team](https://github.com/Nepherhotep/teambot/blob/master/screenshots/create_default_team.png)
+
 
