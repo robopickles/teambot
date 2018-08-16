@@ -139,4 +139,20 @@ At the moment only a single team is used, but it's still required to create the
 entity in database, as it keeps references to team members.
 ![Create Default Team](https://github.com/Nepherhotep/teambot/blob/master/screenshots/create_default_team.png)
 
+### Create manager users
 
+Add managers here http://localhost/admin/auth/user/add/ - the users, who will have access to team statistics.
+There are two ways kind of permissions can be set for managers:
+
+* Staff + superuser permissions. Those users will see all the data in teambot and dashboard will show all
+developers
+* Staff + specific permissions (superuser checkbox is unchecked). Those users will only default team statistics
+in dashboard, and the admin will display only explicitly allowed chapters.
+
+Note: manager accounts aren't related User Profiles, whose statistics is collected.
+
+### Tips
+
+* The default page is a team dashboard - http://localhost/.
+* To view the previous day worklogs per team - open the following link http://localhost/admin/botapp/worklog/?daterange=yesterday
+* To view the full task work logs - just click JIRA link in worklogs screen
