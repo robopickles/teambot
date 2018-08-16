@@ -71,6 +71,7 @@ web is linked to localhost, but you need to replace it with your real domain nam
 
 Go to that link http://localhost/admin/botapp/userprofile/add/ and populate user names and
 service accounts.
+![Add User Profile Image](https://github.com/Nepherhotep/teambot/blob/master/screenshots/add_user_profile.png)
 Service types are upwork/sreenshot monitor (smon) or gitlab. UID - user id in the given service.
 
 Note: gitlab UID is email user specified in their GIT settings. It's also possible to add 
