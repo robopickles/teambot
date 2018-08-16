@@ -62,12 +62,61 @@ on what, and how many time in total was spent to the given task (development, co
 
 ## Quick Installation
 
-1. Put docker-compose.yml file in directory
-2. Setup environment variables
-3. Launch container docker-compose up
-4. Enter container docker exec -it teambot_web_1 /bin/bash
-5. Create table schema with command inside container "python3 manage.py migrate"
-6. Create super user inside container "python3 manage.py create"
+* Put docker-compose.yml file in directory and fill setup required variables
+```yaml
+version: "2"
+
+services:
+  web:
+    image: nepherhotep/teambot
+
+    ports:
+      - "80:80"
+
+    environment:
+      - PGHOST=postgres
+      - PGDATABASE=postgres
+      - PGUSER=postgres
+
+      - DJANGO_SECRET_KEY
+      - DJANGO_ALLOWED_HOSTS=localhost,yourdomain.com
+
+      - JIRA_BASE_URL=https://yourdomain.atlassian.net
+      - JIRA_PROJECT_KEYS=BACK,WEB,IOS,ANDR
+      - JIRA_USER
+      - JIRA_PASSWORD
+
+      - UPWORK_COMPANY_ID
+      - UPWORK_TEAM_ID
+
+      - KIBANA_URL
+      - GITLAB_SCHEDULED_PROJECT_URL
+
+      - HIPCHAT_TOKEN
+      - UPWORK_PUBLIC_KEY
+      - UPWORK_SECRET_KEY
+      - UPWORK_OAUTH_TOKEN
+      - UPWORK_OAUTH_TOKEN_SECRET
+      - GITLAB_HOST
+      - GITLAB_TOKEN
+      - SMON_TOKEN
+
+      - SLACK_TOKEN
+      - SLACK_TIMESHEET_REPORT_CHANNEL=management
+      - SLACK_ISSUES_REPORT_CHANNEL=development
+
+  postgres:
+    image: postgres
+
+  redis:
+    image: redis
+
+```
+* Setup environment variables
+* Launch container ```docker-compose up```
+* Enter container ```docker exec -it teambot_web_1 /bin/bash```
+* Create table schema with command inside container ```python3 manage.py migrate```
+* Create super user inside container ```python3 manage.py create```
 
 ## Setting Up Teambot
 
