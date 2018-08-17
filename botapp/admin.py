@@ -163,9 +163,15 @@ class WorklogAdmin(admin.ModelAdmin):
 class WorklogInline(admin.TabularInline):
     model = Worklog
     fields = ['work_date', 'user_name', 'hours', 'description']
-    readonly_fields = ['work_date', 'user_name', 'hours', 'description']
+    readonly_fields = ['work_date', 'user', 'hours', 'description']
     extra = 0
     ordering = ['work_date']
+
+    def user(self, obj):
+        if obj.user_profile:
+            return obj.user_profile
+        else:
+            return '{}, {}'.format(obj.user_id, obj.user_name)
 
 
 @admin.register(Issue)
