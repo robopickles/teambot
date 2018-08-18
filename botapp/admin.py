@@ -162,7 +162,7 @@ class WorklogAdmin(admin.ModelAdmin):
 
 class WorklogInline(admin.TabularInline):
     model = Worklog
-    fields = ['work_date', 'user_name', 'hours', 'description']
+    fields = ['work_date', 'user', 'hours', 'description']
     readonly_fields = ['work_date', 'user', 'hours', 'description']
     extra = 0
     ordering = ['work_date']
