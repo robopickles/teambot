@@ -12,4 +12,4 @@ python-dateutil>=2.6.0
 django-bootstrap3==8.2.3
 slackclient==1.0.6
 reportlab==3.5.0
-safe-logger==1.1.0
+safe-logger==1.6.0

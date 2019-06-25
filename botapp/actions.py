@@ -58,7 +58,8 @@ class IssueAction(BaseDateAction):
 
         users = {}
         for w in Worklog.objects.filter(Q.work_date >= from_date,
-                                        Q.work_date <= to_date) \
+                                        Q.work_date <= to_date,
+                                        Q.user_profile.active == True) \
                 .prefetch_related('user_profile'):
             if w.user_profile and not w.description:
                 key = w.user_profile.id

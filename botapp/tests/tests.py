@@ -73,6 +73,12 @@ class TestUpwork(TestCase):
                                                                       'output': 'console'})
         self.assertEqual(msg.strip(), """Total hours of tracked time without memo:
 John Smith....0.2h""")
+        jsmith = UserProfile.objects.get(name='John Smith')
+        jsmith.active = False
+        jsmith.save()
+        msg = IssueAction().handle_dates(date.today(), date.today(), {'sync': True,
+                                                                      'output': 'console'})
+        self.assertEqual(msg.strip(), """No problems found""")
 
     def test_send_report_console(self):
         msg = ReportAction().handle_dates(date.today(), date.today(), {'sync': True, 'output': 'console'})
