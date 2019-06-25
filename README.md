@@ -62,6 +62,8 @@ on what, and how many time in total was spent to the given task (development, co
 
 ## Quick Installation
 
+Generate `JIRA_TOKEN` here: [https://id.atlassian.com/manage/api-tokens](api-tokens)
+
 * Put docker-compose.yml file in directory and fill setup required variables
 ```yaml
 version: "2"
@@ -84,7 +86,7 @@ services:
       - JIRA_BASE_URL=https://yourdomain.atlassian.net
       - JIRA_PROJECT_KEYS=BACK,WEB,IOS,ANDR
       - JIRA_USER
-      - JIRA_PASSWORD
+      - JIRA_TOKEN
 
       - UPWORK_COMPANY_ID
       - UPWORK_TEAM_ID

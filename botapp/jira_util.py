@@ -11,12 +11,10 @@ LOGIN_URL = '{}/rest/auth/latest/session'.format(settings.JIRA_BASE_URL)
 
 
 class JiraFetcher:
-    def fetch_jira_issue(self, issue_id):        
+    def fetch_jira_issue(self, issue_id):
         s = requests.session()
-        s.post(LOGIN_URL, json={'username': os.environ['JIRA_USER'],
-                                'password': os.environ['JIRA_PASSWORD']})
         issue_url = '{}/rest/api/latest/issue/{}'.format(settings.JIRA_BASE_URL, issue_id)
-        j = s.get(issue_url).json()
+        j = s.get(issue_url, auth=(os.environ['JIRA_USER'], os.environ['JIRA_TOKEN'])).json()
         return j
 
     def get_original_estimate(self, issue_dict):
