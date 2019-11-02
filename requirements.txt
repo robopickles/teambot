@@ -1,6 +1,6 @@
 python_upwork==1.3
 requests==2.13.0
-django==1.10.5
+django==1.11.23
 django-orm-sugar==0.9.0
 kombu==4.3.0
 celery==4.2.1
