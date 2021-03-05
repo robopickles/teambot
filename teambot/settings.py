@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -138,11 +139,11 @@ USE_TZ = True
 
 
 STATIC_URL = '/static/'
-STATIC_ROOT = '/home/docker/code/static/'
+STATIC_ROOT = os.environ.get('STATIC_ROOT', '/home/docker/code/static/')
 
 
 # CELERY SETTINGS
-BROKER_URL = 'redis://redis:6379/0'
+BROKER_URL = os.environ.get('TEAMBOT_REDIS', 'redis://redis:6379/0')
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
@@ -158,15 +159,15 @@ LOGGING = {
         'simple': {'format': '%(levelname)s %(asctime)s %(message)s'},
     },
     'handlers': {
-        'console': {'level': 'DEBUG',
-                    'class':'logging.StreamHandler',
-                    'formatter': 'simple'},
-        'null': {'class': 'logging.NullHandler', },
+        'console': {'level': 'DEBUG', 'class': 'logging.StreamHandler', 'formatter': 'simple'},
+        'null': {
+            'class': 'logging.NullHandler',
+        },
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
             'filename': '/var/log/teambot/django.log',
-            'formatter': 'simple'
+            'formatter': 'simple',
         },
     },
     'loggers': {

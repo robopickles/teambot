@@ -4,3 +4,6 @@ venv/*
 *pyc
 db.sqlite3
 .idea/*
+/.projectile
+/.envrc
+/static/

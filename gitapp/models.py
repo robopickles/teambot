@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 
-from botapp.enums import GitHosting, get_choices
+from botapp.enums import get_choices, GitHosting
 
 
 class GitProject(models.Model):
@@ -16,12 +16,22 @@ class GitProject(models.Model):
 
 
 class GitCommit(models.Model):
-    project = models.ForeignKey(GitProject, null=True, blank=True)
-    issue = models.ForeignKey('botapp.Issue', null=True, blank=True)
-    author_profile = models.ForeignKey('botapp.UserProfile', null=True, blank=True,
-                                       related_name='created_commits', on_delete=models.SET_NULL)
-    committer_profile = models.ForeignKey('botapp.UserProfile', null=True, blank=True,
-                                          related_name='merged_commits', on_delete=models.SET_NULL)
+    project = models.ForeignKey(GitProject, null=True, blank=True, on_delete=models.CASCADE)
+    issue = models.ForeignKey('botapp.Issue', null=True, blank=True, on_delete=models.SET_NULL)
+    author_profile = models.ForeignKey(
+        'botapp.UserProfile',
+        null=True,
+        blank=True,
+        related_name='created_commits',
+        on_delete=models.SET_NULL,
+    )
+    committer_profile = models.ForeignKey(
+        'botapp.UserProfile',
+        null=True,
+        blank=True,
+        related_name='merged_commits',
+        on_delete=models.SET_NULL,
+    )
 
     hash = models.CharField(max_length=40, unique=True)
     short_id = models.CharField(max_length=11)

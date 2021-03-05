@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from django.contrib.auth.models import User
 from django.db import models
 
-from botapp.enums import get_choices, ServiceType, IssueSystem, WorklogSystem
+from botapp.enums import get_choices, IssueSystem, ServiceType, WorklogSystem
 
 
 class UserProfile(models.Model):
@@ -27,9 +27,12 @@ class ServiceAccount(models.Model):
     """
     Reference for JIRA, Upwork or other users
     """
+
     uid = models.CharField(max_length=50)
     service_type = models.IntegerField(choices=get_choices(ServiceType))
-    user_profile = models.ForeignKey(UserProfile, related_name='service_accounts')
+    user_profile = models.ForeignKey(
+        UserProfile, related_name='service_accounts', on_delete=models.CASCADE
+    )
 
     def __str__(self):
         return '{}: {}'.format(ServiceType(self.service_type).name, self.uid)
