@@ -32,3 +32,4 @@ class GitHosting(IntEnum):
 class WorklogSystem(IntEnum):
     upwork = 0
     smon = 2  # screenshotmonitor.com
+    jira = 3
