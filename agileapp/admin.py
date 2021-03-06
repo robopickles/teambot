@@ -1,7 +1,6 @@
 from django.contrib import admin
-
-# Register your models here.
 from django.forms import Textarea
+from django.utils.safestring import mark_safe
 
 from agileapp.models import Standup, StandupUserSummary
 
@@ -25,9 +24,7 @@ class StandupAdmin(admin.ModelAdmin):
         return obj.standupusersummary_set.count()
 
     def download_pdf_report(self, obj):
-        return '<a href="/agile/standup-{}.pdf?download">Download</a>'.format(obj.id)
-    download_pdf_report.allow_tags = True
+        return mark_safe('<a href="/agile/standup-{}.pdf?download">Download</a>'.format(obj.id))
 
     def view_pdf_report(self, obj):
-        return '<a href="/agile/standup-{}.pdf">View</a>'.format(obj.id)
-    view_pdf_report.allow_tags = True
+        return mark_safe('<a href="/agile/standup-{}.pdf">View</a>'.format(obj.id))

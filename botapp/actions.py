@@ -1,13 +1,12 @@
 from datetime import date, timedelta
 
-from django.db.models import F
-from django.db.models import Sum
+from django.db.models import F, Sum
 from django.template import loader
 from django_orm_sugar import Q
 
-from botapp.models import Worklog, UserProfile, Team
+from botapp.models import Team, Worklog
 from botapp.outputs import get_output
-from botapp.trackers import UpworkLoader, SMonLoader
+from botapp.trackers import SMonLoader, UpworkLoader
 from gitapp.git_utils import GitlabLoader
 
 
@@ -36,7 +35,7 @@ class BaseDateAction(BaseAction):
             to_date = monday - timedelta(1)
 
         elif options.get('last_days'):
-            from_date = today - timedelta(days=options.get('last_days')-1)
+            from_date = today - timedelta(days=options.get('last_days') - 1)
             to_date = today
         else:
             from_date = options.get('from_date') or today
@@ -57,10 +56,9 @@ class IssueAction(BaseDateAction):
             SMonLoader().sync(from_date, to_date)
 
         users = {}
-        for w in Worklog.objects.filter(Q.work_date >= from_date,
-                                        Q.work_date <= to_date,
-                                        Q.user_profile.active == True) \
-                .prefetch_related('user_profile'):
+        for w in Worklog.objects.filter(
+            Q.work_date >= from_date, Q.work_date <= to_date, Q.user_profile.active == True
+        ).prefetch_related('user_profile'):
             if w.user_profile and not w.description:
                 key = w.user_profile.id
                 if key in users:
@@ -71,8 +69,7 @@ class IssueAction(BaseDateAction):
         if users:
             user_list = sorted(users.values(), key=lambda x: x[0].name)
             t = loader.get_template('missing_memo_report.txt')
-            context = {'timesheet': user_list,
-                       'title': options.get('title', '')}
+            context = {'timesheet': user_list, 'title': options.get('title', '')}
 
             msg = t.render(context)
             return self.send_message(msg, options)
@@ -98,10 +95,12 @@ class ReportAction(BaseDateAction):
 
         qs = team.user_profiles.all()
         work_date = Q.worklog.work_date
-        for u in qs.order_by('name').filter(work_date >= from_date,
-                                            work_date <= to_date) \
-                .prefetch_related('worklog_set') \
-                .annotate(total_hours=Sum(F(Q.worklog.hours.get_path()))):
+        for u in (
+            qs.order_by('name')
+            .filter(work_date >= from_date, work_date <= to_date)
+            .prefetch_related('worklog_set')
+            .annotate(total_hours=Sum(F(Q.worklog.hours.get_path())))
+        ):
             users.append(u)
         return self.send_message(users, from_date, to_date, options)
 

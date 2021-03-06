@@ -1,6 +1,3 @@
-from __future__ import unicode_literals
-
-from django.contrib.auth.models import User
 from django.db import models
 
 from botapp.enums import get_choices, IssueSystem, ServiceType, WorklogSystem

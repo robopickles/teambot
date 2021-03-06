@@ -1,19 +1,14 @@
 from datetime import date, timedelta
 
-import json
-
-import plotly.offline as opy
 import plotly.graph_objs as go
-
+import plotly.offline as opy
 from django.contrib import admin
 from django.contrib.admin.views.main import ChangeList
-from django.db.models import Count
-from django.db.models import Sum
-from django.template import loader
+from django.db.models import Count, Sum
 from django_orm_sugar import Q
 
 from botapp.enums import ServiceType
-from botapp.models import ServiceAccount, UserProfile, Worklog, Issue, Team
+from botapp.models import Issue, ServiceAccount, Team, UserProfile, Worklog
 
 
 @admin.register(ServiceAccount)
@@ -74,16 +69,17 @@ class WeekListFilter(admin.SimpleListFilter):
                 return queryset.filter(Q.work_date >= monday)
 
             elif self.value() == 'prev_week':
-                return queryset.filter(Q.work_date >= monday - timedelta(7),
-                                       Q.work_date < monday)
+                return queryset.filter(Q.work_date >= monday - timedelta(7), Q.work_date < monday)
 
             elif self.value() == 'prev2_week':
-                return queryset.filter(Q.work_date >= monday - timedelta(14),
-                                       Q.work_date < monday - timedelta(7))
+                return queryset.filter(
+                    Q.work_date >= monday - timedelta(14), Q.work_date < monday - timedelta(7)
+                )
 
             elif self.value() == 'prev3_week':
-                return queryset.filter(Q.work_date >= monday - timedelta(21),
-                                       Q.work_date < monday - timedelta(14))
+                return queryset.filter(
+                    Q.work_date >= monday - timedelta(21), Q.work_date < monday - timedelta(14)
+                )
 
             elif self.value() == '4weeks':
                 return queryset.filter(Q.work_date >= monday - timedelta(21))
@@ -97,16 +93,26 @@ class WeekListFilter(admin.SimpleListFilter):
 class UpworkChangeList(ChangeList):
     def get_results(self, *args, **kwargs):
         super(UpworkChangeList, self).get_results(*args, **kwargs)
-        q = self.result_list.aggregate(total_hours=Sum('hours'),
-                                       issues_count=Count('issue', distinct=True))
+        q = self.result_list.aggregate(
+            total_hours=Sum('hours'), issues_count=Count('issue', distinct=True)
+        )
         self.total_hours = q['total_hours']
         self.issues_count = q['issues_count']
 
 
 @admin.register(Worklog)
 class WorklogAdmin(admin.ModelAdmin):
-    list_display = ['user', 'work_date', 'week_day', 'logged', 'orig_estimate', 'total', 'description',
-                    'open_issue', 'issue_title']
+    list_display = [
+        'user',
+        'work_date',
+        'week_day',
+        'logged',
+        'orig_estimate',
+        'total',
+        'description',
+        'open_issue',
+        'issue_title',
+    ]
     exclude = ['user_id', 'user_name']
     list_filter = [WeekListFilter, 'user_profile']
     search_fields = ['description', 'issue__title']
@@ -133,6 +139,7 @@ class WorklogAdmin(admin.ModelAdmin):
             return pattern.format(obj.issue.id, obj.issue.issue_id)
         else:
             return ''
+
     open_issue.allow_tags = True
 
     def issue_title(self, obj):
@@ -176,10 +183,24 @@ class WorklogInline(admin.TabularInline):
 
 @admin.register(Issue)
 class IssueAdmin(admin.ModelAdmin):
-    list_display = ['issue_id', 'issue_system', 'title', 'original_estimate', 'description',
-                    'open_link']
-    readonly_fields = ['issue_id', 'issue_system', 'title', 'description', 'jira_link',
-                       'original_estimate', 'total_hours_worked', 'pie_chart']
+    list_display = [
+        'issue_id',
+        'issue_system',
+        'title',
+        'original_estimate',
+        'description',
+        'open_link',
+    ]
+    readonly_fields = [
+        'issue_id',
+        'issue_system',
+        'title',
+        'description',
+        'jira_link',
+        'original_estimate',
+        'total_hours_worked',
+        'pie_chart',
+    ]
     search_fields = ['issue_id']
     exclude = ['url']
     inlines = [WorklogInline]

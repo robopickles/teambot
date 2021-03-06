@@ -1,4 +1,4 @@
-FROM ubuntu:bionic
+FROM ubuntu:focal
 
 MAINTAINER Alexey Zankevich <zancudero@gmail.com>
 
@@ -7,6 +7,7 @@ ENV LANGUAGE C.UTF-8
 ENV LC_ALL C.UTF-8
 ENV CONTAINER_TYPE teambot
 ENV SUPERVISOR_CONFIG app.conf
+ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt update && \
     apt install -y binutils \
@@ -41,10 +42,10 @@ ADD . /home/docker/code/
 
 WORKDIR /home/docker/code/
 
+RUN mkdir -p /var/log/teambot/
 VOLUME /var/log/teambot/
 
 # -: optimize
 RUN python3 manage.py collectstatic -c --noinput
-
 EXPOSE 80
 CMD ["bash", "-c", "test -f /etc/supervisor/conf.d/$SUPERVISOR_CONFIG || ln -s /home/docker/code/ext_configs/supervisor/$SUPERVISOR_CONFIG /etc/supervisor/conf.d/ && supervisord -n" ]
