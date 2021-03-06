@@ -1,24 +1,17 @@
-import os
-from pprint import pprint
-
-import re
-
 import logging
+import os
+import re
+from datetime import datetime, timedelta
 
 import requests
 import upwork
-from datetime import datetime, timedelta
-
-from dateutil.tz import tzoffset
 from django.conf import settings
 from django.utils import timezone
 from django_orm_sugar import Q
 
-from botapp.enums import ServiceType, IssueSystem, WorklogSystem
+from botapp.enums import IssueSystem, ServiceType, WorklogSystem
 from botapp.jira_util import JiraFetcher
-from botapp.models import Worklog, ServiceAccount, Issue, UserProfile
-
-import xml.etree.ElementTree as ET
+from botapp.models import Issue, ServiceAccount, UserProfile, Worklog
 
 
 class IssueLoader:
@@ -42,7 +35,7 @@ class IssueLoader:
 
     def get_issue(self, description):
         issue_tuple = self.parse_issue(description)
-        
+
         if issue_tuple:
             issue_system, issue_id = issue_tuple
 
@@ -53,8 +46,7 @@ class IssueLoader:
                 return issue
 
             if issue_system == IssueSystem.jira:
-                issue = Issue.objects.filter(issue_system=issue_system,
-                                             issue_id=issue_id).first()
+                issue = Issue.objects.filter(issue_system=issue_system, issue_id=issue_id).first()
 
                 if issue:
                     if self.autoupdate:
@@ -94,36 +86,48 @@ class BaseWorklogLoader:
             self.sync_fetched_report(from_date, to_date, report)
 
     def sync_fetched_report(self, from_date, to_date, report):
-        self.log.info('Sync report {} from {} to {}'.format(self.worklog_system.name, from_date, to_date))
+        self.log.info(
+            'Sync report {} from {} to {}'.format(self.worklog_system.name, from_date, to_date)
+        )
 
         # Drop all previous worklog
-        Worklog.objects.filter(Q.work_date >= from_date,
-                               Q.work_date <= to_date,
-                               Q.worklog_system == self.worklog_system).delete()
+        Worklog.objects.filter(
+            Q.work_date >= from_date,
+            Q.work_date <= to_date,
+            Q.worklog_system == self.worklog_system,
+        ).delete()
         batch = []
 
         issue_loader = IssueLoader(autoupdate=True)
-        for (user_id, user_name, work_date,
-             hours, memo, dt_range) in self.iter_fetched_report(report):
-            service_account = ServiceAccount.objects.filter(service_type=self.service_type,
-                                                            uid=user_id).first()
+        for (user_id, user_name, work_date, hours, memo, dt_range) in self.iter_fetched_report(
+            report
+        ):
+            service_account = ServiceAccount.objects.filter(
+                service_type=self.service_type, uid=user_id
+            ).first()
 
             user_profile = service_account.user_profile if service_account else None
 
             issue = issue_loader.get_issue_failsafe(memo)
 
-            worklog = Worklog(work_date=work_date,
-                              user_id=user_id,
-                              user_name=user_name,
-                              hours=hours,
-                              description=memo,
-                              issue=issue,
-                              from_datetime=dt_range[0],
-                              to_datetime=dt_range[1],
-                              worklog_system=self.worklog_system,
-                              user_profile=user_profile)
+            worklog = Worklog(
+                work_date=work_date,
+                user_id=user_id,
+                user_name=user_name,
+                hours=hours,
+                description=memo,
+                issue=issue,
+                from_datetime=dt_range[0],
+                to_datetime=dt_range[1],
+                worklog_system=self.worklog_system,
+                user_profile=user_profile,
+            )
 
-            self.log.info(u'worklog: {}, {}, {}, {}, {}, {}'.format(user_id, user_name, work_date, hours, memo, dt_range))
+            self.log.info(
+                u'worklog: {}, {}, {}, {}, {}, {}'.format(
+                    user_id, user_name, work_date, hours, memo, dt_range
+                )
+            )
             if worklog.work_date >= from_date and worklog.work_date <= to_date:
                 batch.append(worklog)
         Worklog.objects.bulk_create(batch)
@@ -141,19 +145,23 @@ class UpworkLoader(BaseWorklogLoader):
     service_type = ServiceType.upwork
 
     def fetch_team_report(self, from_date, to_date):
-        client = upwork.Client(os.environ['UPWORK_PUBLIC_KEY'],
-                               os.environ['UPWORK_SECRET_KEY'],
-                               oauth_access_token=os.environ['UPWORK_OAUTH_TOKEN'],
-                               oauth_access_token_secret=os.environ['UPWORK_OAUTH_TOKEN_SECRET'])
+        client = upwork.Client(
+            os.environ['UPWORK_PUBLIC_KEY'],
+            os.environ['UPWORK_SECRET_KEY'],
+            oauth_access_token=os.environ['UPWORK_OAUTH_TOKEN'],
+            oauth_access_token_secret=os.environ['UPWORK_OAUTH_TOKEN_SECRET'],
+        )
         pattern = '%Y-%m-%d'
         fd = from_date.strftime(pattern)
         td = to_date.strftime(pattern)
 
-        query = "SELECT worked_on, provider_id, provider_name, sum(hours), memo " \
-                "WHERE worked_on >= '{}' AND worked_on <= '{}'".format(fd, td)
-        report = client.timereport.get_team_report(settings.UPWORK_COMPANY_ID,
-                                                   settings.UPWORK_TEAM_ID,
-                                                   query)
+        query = (
+            "SELECT worked_on, provider_id, provider_name, sum(hours), memo "
+            "WHERE worked_on >= '{}' AND worked_on <= '{}'".format(fd, td)
+        )
+        report = client.timereport.get_team_report(
+            settings.UPWORK_COMPANY_ID, settings.UPWORK_TEAM_ID, query
+        )
         if report.get('status', 'success') == 'success':
             return report
         else:
@@ -191,6 +199,7 @@ class SMonLoader(BaseWorklogLoader):
     """
     SMon - screenshot monitor loader
     """
+
     worklog_system = WorklogSystem.smon
     service_type = ServiceType.smon
 
@@ -202,10 +211,12 @@ class SMonLoader(BaseWorklogLoader):
             work_date = datetime.fromtimestamp(from_time, tz=timezone.utc).date()
             user_id = d['employmentId']
             user_name = ''
-            hours = (to_time - from_time) / 3600.
+            hours = (to_time - from_time) / 3600.0
             memo = d['note']
-            dt_range = (datetime.fromtimestamp(from_time, timezone.utc),
-                        datetime.fromtimestamp(to_time, timezone.utc))
+            dt_range = (
+                datetime.fromtimestamp(from_time, timezone.utc),
+                datetime.fromtimestamp(to_time, timezone.utc),
+            )
             yield user_id, user_name, work_date, hours, memo, dt_range
 
     def fetch_team_report(self, from_date, to_date):
@@ -221,18 +232,20 @@ class SMonLoader(BaseWorklogLoader):
 
         data = []
         for s in ServiceAccount.objects.filter(service_type=ServiceType.smon):
-            data.append({"employmentId": s.uid,
-                         "from": from_timestamp,
-                         "to": to_timestamp})
+            data.append({"employmentId": s.uid, "from": from_timestamp, "to": to_timestamp})
 
         if data:
-            r = requests.post('https://screenshotmonitor.com/api/v2/GetActivities', json=data,
-                              headers=headers)
+            r = requests.post(
+                'https://screenshotmonitor.com/api/v2/GetActivities', json=data, headers=headers
+            )
             if r.status_code == 200:
                 return r.json()
             else:
-                raise Exception('Screenshot Monitor failed to sync with errors: {}, {}'
-                                    .format(r.status_code, r.content))
+                raise Exception(
+                    'Screenshot Monitor failed to sync with errors: {}, {}'.format(
+                        r.status_code, r.content
+                    )
+                )
 
 
 class AccountCreator(UpworkLoader):
@@ -247,6 +260,6 @@ class AccountCreator(UpworkLoader):
             if created:
                 self.log.info('Created profile {}'.format(profile))
 
-            service_account, created = ServiceAccount.objects.get_or_create(service_type=ServiceType.upwork,
-                                                                            uid=user_id,
-                                                                            user_profile=profile)
+            service_account, created = ServiceAccount.objects.get_or_create(
+                service_type=ServiceType.upwork, uid=user_id, user_profile=profile
+            )

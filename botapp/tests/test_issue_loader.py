@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from botapp.enums import ServiceType, IssueSystem
+from botapp.enums import IssueSystem, ServiceType
 from botapp.models import ServiceAccount, UserProfile
 from botapp.trackers import IssueLoader
 
@@ -8,9 +8,9 @@ from botapp.trackers import IssueLoader
 class TestBatchImport(TestCase):
     def setUp(self):
         user1 = UserProfile.objects.create(name='user1')
-        self.user1 = ServiceAccount.objects.create(user_profile=user1,
-                                                   uid='user1',
-                                                   service_type=ServiceType.jira)
+        self.user1 = ServiceAccount.objects.create(
+            user_profile=user1, uid='user1', service_type=ServiceType.jira
+        )
 
     def test_parse_issue(self):
         system, issue_id = IssueLoader().parse_issue('BACK-193: hello world')
