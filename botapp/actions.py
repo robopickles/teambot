@@ -6,7 +6,7 @@ from django_orm_sugar import Q
 
 from botapp.models import Team, Worklog
 from botapp.outputs import get_output
-from botapp.trackers import SMonLoader, UpworkLoader
+from botapp.trackers import JiraLoader, SMonLoader, UpworkLoader
 from gitapp.git_utils import GitlabLoader
 
 
@@ -118,6 +118,11 @@ class SyncGitlabAction(BaseDateAction):
 class SyncSMonAction(BaseDateAction):
     def handle_dates(self, from_date, to_date, options):
         SMonLoader().sync(from_date, to_date)
+
+
+class SyncJiraAction(BaseDateAction):
+    def handle_dates(self, from_date, to_date, options):
+        JiraLoader().sync(from_date, to_date)
 
 
 class GitlabScheduledStatusAction(BaseAction):

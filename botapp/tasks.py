@@ -1,8 +1,14 @@
 import logging
 
+from botapp.actions import (
+    GitlabScheduledStatusAction,
+    IssueAction,
+    ReportAction,
+    SyncGitlabAction,
+    SyncJiraAction,
+    SyncSMonAction,
+)
 from teambot.celery_app import app
-from botapp.actions import SyncGitlabAction, SyncSMonAction, ReportAction, IssueAction, \
-    GitlabScheduledStatusAction
 
 
 @app.task
@@ -28,6 +34,11 @@ def sync_smon(**options):
 @app.task
 def send_gitlab_scheduled_status(**options):
     GitlabScheduledStatusAction().handle(**options)
+
+
+@app.task
+def sync_jira(**options):
+    SyncJiraAction().handle(**options)
 
 
 @app.task
