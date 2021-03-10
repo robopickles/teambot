@@ -2,6 +2,7 @@ import logging
 import os
 import re
 from datetime import datetime, timedelta
+from functools import cached_property
 
 import requests
 import upwork
@@ -263,3 +264,31 @@ class AccountCreator(UpworkLoader):
             service_account, created = ServiceAccount.objects.get_or_create(
                 service_type=ServiceType.upwork, uid=user_id, user_profile=profile
             )
+
+
+class JiraLoader(BaseWorklogLoader):
+    worklog_system = WorklogSystem.jira
+    service_type = ServiceType.jira
+
+    @cached_property
+    def jf(self):
+        return JiraFetcher()
+
+    def fetch_team_report(self, from_date, to_date):
+        start = datetime.fromordinal(from_date.toordinal())
+        end = datetime.fromordinal(to_date.toordinal()) + timedelta(days=1)
+        report = list(self.jf.fetch_worklogs(start, end))
+        return report
+
+    def iter_fetched_report(self, report):
+        for item in report:
+            print(f'Item: {item}')
+            work_date = datetime.strptime(item['updated'], '%Y-%m-%dT%H:%M:%S.%f%z').date()
+            user_id = item['updateAuthor']['accountId']
+            user_name = item['updateAuthor']['displayName']
+            hours = float(item['timeSpentSeconds'] / 60 / 60)
+            issue = self.jf.fetch_jira_issue(item['issueId'])
+            memo = issue['key']
+
+            dt_range = (None, None)
+            yield user_id, user_name, work_date, hours, memo, dt_range

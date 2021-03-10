@@ -1,4 +1,5 @@
 import os
+from functools import cached_property
 
 import requests
 from django.conf import settings
@@ -12,11 +13,49 @@ CUSTOM_ETA_FIELD = os.environ.get('CUSTOM_ETA_FIELD', 'customfield_10035')
 
 
 class JiraFetcher:
+    @cached_property
+    def auth(self):
+        return (os.environ['JIRA_USER'], os.environ['JIRA_TOKEN'])
+
+    @cached_property
+    def api_url(self):
+        return f'{settings.JIRA_BASE_URL}/rest/api/latest'
+
     def fetch_jira_issue(self, issue_id):
         s = requests.session()
         issue_url = '{}/rest/api/latest/issue/{}'.format(settings.JIRA_BASE_URL, issue_id)
-        j = s.get(issue_url, auth=(os.environ['JIRA_USER'], os.environ['JIRA_TOKEN'])).json()
+        j = s.get(issue_url, auth=self.auth).json()
         return j
+
+    def iter_worklogs(self, session, values):
+        for item in values:
+            worklog_id = item['worklogId']
+            updated = item['updatedTime']
+            resp = session.post(
+                f'{self.api_url}/worklog/list', json={'ids': [worklog_id]}, auth=self.auth
+            )
+            assert resp.status_code == 200, (resp, resp.reason)
+            resp = resp.json()
+            for i in resp:
+                yield resp[0], updated
+
+    def fetch_worklogs(self, start, end):
+        with requests.session() as session:
+            start_unix = int(start.timestamp() * 1000)
+            end_unix = int(end.timestamp() * 1000)
+            last = None
+            while not last:
+                resp = session.get(
+                    f'{settings.JIRA_BASE_URL}/rest/api/latest/worklog/updated',
+                    auth=self.auth,
+                    params={'since': start_unix},
+                ).json()
+                last = resp['lastPage']
+                start_unix = resp['until']
+                for i, updated in self.iter_worklogs(session, resp['values']):
+                    if updated > end_unix:
+                        return
+                    yield i
 
     def get_original_estimate(self, issue_dict):
         tt = issue_dict.get('fields', {}).get('timetracking', {})

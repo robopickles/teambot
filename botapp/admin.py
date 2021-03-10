@@ -6,6 +6,7 @@ from django.contrib import admin
 from django.contrib.admin.views.main import ChangeList
 from django.db.models import Count, Sum
 from django_orm_sugar import Q
+from django.utils.safestring import mark_safe
 
 from botapp.enums import ServiceType
 from botapp.models import Issue, ServiceAccount, Team, UserProfile, Worklog
@@ -136,11 +137,9 @@ class WorklogAdmin(admin.ModelAdmin):
     def open_issue(self, obj):
         if obj.issue:
             pattern = '<a href="/admin/botapp/issue/{}/" target="_blank">{}</a>'
-            return pattern.format(obj.issue.id, obj.issue.issue_id)
+            return mark_safe(pattern.format(obj.issue.id, obj.issue.issue_id))
         else:
             return ''
-
-    open_issue.allow_tags = True
 
     def issue_title(self, obj):
         if obj.issue:
@@ -206,10 +205,10 @@ class IssueAdmin(admin.ModelAdmin):
     inlines = [WorklogInline]
 
     def open_link(self, obj):
-        return '<a href="{}" target="_blank" >Open</a>'.format(obj.url)
+        return mark_safe('<a href="{}" target="_blank" >Open</a>'.format(obj.url))
 
     def jira_link(self, obj):
-        return '<a href="{url}" target="_blank" >{url}</a>'.format(url=obj.url)
+        return mark_safe('<a href="{url}" target="_blank" >{url}</a>'.format(url=obj.url))
 
     def total_hours_worked(self, obj):
         qs = obj.worklog_set.all()
@@ -223,7 +222,7 @@ class IssueAdmin(admin.ModelAdmin):
         layout = go.Layout(title=issue_id)
         figure = go.Figure(data=data, layout=layout)
         div = opy.plot(figure, auto_open=False, output_type='div')
-        return div
+        return mark_safe(div)
 
     def pie_chart(self, obj):
         user_dict = {}
@@ -241,13 +240,9 @@ class IssueAdmin(admin.ModelAdmin):
             values.append(round(value, 1))
 
         if user_dict:
-            return self.plotly_chart(obj.issue_id, values, labels)
+            return mark_safe(self.plotly_chart(obj.issue_id, values, labels))
         else:
             return 'Nothing to show'
-
-    pie_chart.allow_tags = True
-    open_link.allow_tags = True
-    jira_link.allow_tags = True
 
 
 @admin.register(Team)

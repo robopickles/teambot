@@ -1,9 +1,9 @@
 from botapp.management import BaseDateCommand
-from gitapp.git_utils import GitlabLoader
+from botapp.trackers import JiraLoader
 
 
 class Command(BaseDateCommand):
-    help = 'Sync upwork reports into Django db'
+    help = 'Sync JIRA reports into Django db'
 
     def handle_dates(self, from_date, to_date, options):
-        GitlabLoader().sync(from_date, to_date)
+        JiraLoader(self).sync(from_date, to_date)
