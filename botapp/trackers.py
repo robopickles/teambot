@@ -288,7 +288,9 @@ class JiraLoader(BaseWorklogLoader):
             user_name = item['updateAuthor']['displayName']
             hours = float(item['timeSpentSeconds'] / 60 / 60)
             issue = self.jf.fetch_jira_issue(item['issueId'])
-            memo = item.get('comment', issue['key'])
+            memo = issue['key']
+            if comment := item.get('comment'):
+                memo += f': {comment}'
 
             dt_range = (None, None)
             yield user_id, user_name, work_date, hours, memo, dt_range
