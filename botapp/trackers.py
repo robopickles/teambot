@@ -303,7 +303,6 @@ class JiraLoader(BaseWorklogLoader):
             work_date = datetime.strptime(item['updated'], '%Y-%m-%dT%H:%M:%S.%f%z').date()
             user_id = item['updateAuthor']['accountId']
             user_name = item['updateAuthor']['displayName']
-            users[user_id] = user_name
             hours = float(item['timeSpentSeconds'] / 60 / 60)
             issue = self.jf.fetch_jira_issue(item['issueId'])
             memo = issue['key']
