@@ -1,6 +1,7 @@
 import logging
 import os
 import re
+from abc import ABC, abstractmethod
 from datetime import datetime, timedelta
 from functools import cached_property
 
@@ -62,9 +63,9 @@ class IssueLoader:
                 return issue
 
 
-class BaseWorklogLoader:
-    worklog_system = None
-    service_type = None
+class BaseWorklogLoader(ABC):
+    worklog_system: WorklogSystem
+    service_type: ServiceType
     log = logging.getLogger('django.server')
 
     def __init__(self, command=None):
@@ -92,12 +93,6 @@ class BaseWorklogLoader:
             'Sync report {} from {} to {}'.format(self.worklog_system.name, from_date, to_date)
         )
 
-        # Drop all previous worklog
-        Worklog.objects.filter(
-            Q.work_date >= from_date,
-            Q.work_date <= to_date,
-            Q.worklog_system == self.worklog_system,
-        ).delete()
         batch = []
 
         issue_loader = IssueLoader(autoupdate=True)
@@ -132,12 +127,21 @@ class BaseWorklogLoader:
             )
             if worklog.work_date >= from_date and worklog.work_date <= to_date:
                 batch.append(worklog)
+
+        # Drop all previous worklog
+        Worklog.objects.filter(
+            Q.work_date >= from_date,
+            Q.work_date <= to_date,
+            Q.worklog_system == self.worklog_system,
+        ).delete()
         Worklog.objects.bulk_create(batch)
         print('synced {} worklogs'.format(len(batch)))
 
+    @abstractmethod
     def iter_fetched_report(self, report):
         raise NotImplementedError()
 
+    @abstractmethod
     def fetch_team_report(self, from_date, to_date):
         raise NotImplementedError()
 
