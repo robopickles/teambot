@@ -1,0 +1,22 @@
+name: Push Tags
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+
+  save-container:
+    name: create and save container
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v2
+    - run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+    - uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.GHCR_TOKEN }}
+    - run: docker pull ghcr.io/robopickles/teambot:latest || true
+    - run: TAG_NAME=${{ env.RELEASE_VERSION }} make push_ghcr_image

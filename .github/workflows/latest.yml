@@ -1,0 +1,22 @@
+name: Push Latest
+
+on:
+  push:
+    branches:
+      - 'master'
+      - 'v2'
+
+jobs:
+
+  save-container:
+    name: create and save container
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v2
+    - uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.GHCR_TOKEN }}
+    - run: docker pull ghcr.io/robopickles/teambot:latest || true
+    - run: TAG_NAME=latest make push_ghcr_image
