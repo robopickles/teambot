@@ -11,6 +11,7 @@ from django.utils import timezone
 from django_orm_sugar import Q
 
 from botapp.enums import IssueSystem, ServiceType, WorklogSystem
+from botapp.factories import ServiceAccountFactory
 from botapp.jira_util import JiraFetcher
 from botapp.models import Issue, ServiceAccount, UserProfile, Worklog
 
@@ -269,6 +270,7 @@ class AccountCreator(UpworkLoader):
 class JiraLoader(BaseWorklogLoader):
     worklog_system = WorklogSystem.jira
     service_type = ServiceType.jira
+    autocreate_users = os.environ.get('JIRA_AUTOCREATE_USERS', '0') == '1'
 
     @cached_property
     def jf(self):
@@ -280,12 +282,24 @@ class JiraLoader(BaseWorklogLoader):
         report = list(self.jf.fetch_worklogs(start, end))
         return report
 
+    def create_users(self, users):
+        for uid, name in users.items():
+            ServiceAccountFactory(uid=uid, service_type=ServiceType.jira, user_profile__name=name)
+
     def iter_fetched_report(self, report):
+        if self.autocreate_users:
+            users = {
+                item['updateAuthor']['accountId']: item['updateAuthor']['displayName']
+                for item in report
+            }
+            self.create_users(users)
+
         for item in report:
             print(f'Item: {item}')
             work_date = datetime.strptime(item['updated'], '%Y-%m-%dT%H:%M:%S.%f%z').date()
             user_id = item['updateAuthor']['accountId']
             user_name = item['updateAuthor']['displayName']
+            users[user_id] = user_name
             hours = float(item['timeSpentSeconds'] / 60 / 60)
             issue = self.jf.fetch_jira_issue(item['issueId'])
             memo = issue['key']

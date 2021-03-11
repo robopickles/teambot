@@ -87,6 +87,7 @@ services:
       - JIRA_PROJECT_KEYS=BACK,WEB,IOS,ANDR
       - JIRA_USER
       - JIRA_TOKEN
+      - JIRA_AUTOCREATE_USERS=0
       - CUSTOM_ETA_FIELD='customfield_10035'
 
       - UPWORK_COMPANY_ID
