@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+  web:
+    build: .
+
+    environment:
+      - DJANGO_DEBUG=1
+      - PGHOST=postgres
+      - PGDATABASE=postgres
+      - PGUSER=postgres
+      - PGPASSWORD=postgres
+
+      - DJANGO_SECRET_KEY
+      - DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
+
+      - JIRA_BASE_URL=${JIRA_BASE_URL}
+      - JIRA_PROJECT_KEYS=BACK,WEB,IOS,ANDR
+      - JIRA_USER=${JIRA_USER}
+      - JIRA_TOKEN=${JIRA_TOKEN}
+      - CUSTOM_ETA_FIELD=customfield_10035
+
+      - KIBANA_URL
+      - GITLAB_SCHEDULED_PROJECT_URL
+
+      - SLACK_TOKEN
+      - SLACK_TIMESHEET_REPORT_CHANNEL=management
+      - SLACK_ISSUES_REPORT_CHANNEL=development
+
+  postgres:
+    image: postgres:13
+    environment:
+      - POSTGRES_PASSWORD=postgres
+
+  redis:
+    image: redis:6

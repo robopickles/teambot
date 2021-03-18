@@ -1,0 +1,23 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - '*'
+
+
+jobs:
+  test-backend:
+    name: test backend
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+    - run: pip3 install docker-compose
+    - run: cp .github/docker-compose.yml .
+    - run: docker pull ghcr.io/robopickles/teambot:latest
+    - run: docker-compose -p teambot up --build --force-recreate -d
+    - run: docker exec teambot_web_1 bash -c 'pip3 install -r requirements-dev.txt && pytest'
