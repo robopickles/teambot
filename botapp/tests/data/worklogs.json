@@ -1,0 +1,48 @@
+{
+  "values": [
+    {
+      "worklogId": 10000,
+      "updatedTime": 1600845069198,
+      "properties": []
+    },
+    {
+      "worklogId": 10001,
+      "updatedTime": 1603895747022,
+      "properties": []
+    },
+    {
+      "worklogId": 10002,
+      "updatedTime": 1603899558147,
+      "properties": []
+    },
+    {
+      "worklogId": 10003,
+      "updatedTime": 1603906285771,
+      "properties": []
+    },
+    {
+      "worklogId": 10005,
+      "updatedTime": 1603981646572,
+      "properties": []
+    },
+    {
+      "worklogId": 10006,
+      "updatedTime": 1604059294405,
+      "properties": []
+    },
+    {
+      "worklogId": 10007,
+      "updatedTime": 1604150390517,
+      "properties": []
+    },
+    {
+      "worklogId": 10008,
+      "updatedTime": 1604316543119,
+      "properties": []
+    }
+  ],
+  "since": 0,
+  "until": 1615461987143,
+  "self": "https://wannaby.atlassian.net/rest/api/2/worklog/updated?since=0",
+  "lastPage": true
+}

@@ -1,0 +1,315 @@
+{
+  "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+  "id": "12760",
+  "self": "https://wannaby.atlassian.net/rest/api/latest/issue/12760",
+  "key": "WEB-222",
+  "fields": {
+    "statuscategorychangedate": "2021-03-11T14:26:00.479+0300",
+    "customfield_10070": null,
+    "customfield_10071": null,
+    "customfield_10072": null,
+    "customfield_10074": null,
+    "customfield_10075": null,
+    "customfield_10076": null,
+    "fixVersions": [],
+    "customfield_10077": null,
+    "customfield_10078": null,
+    "resolution": null,
+    "customfield_10079": null,
+    "lastViewed": "2021-03-11T14:26:04.056+0300",
+    "customfield_10060": null,
+    "customfield_10061": null,
+    "customfield_10062": null,
+    "customfield_10063": null,
+    "customfield_10064": null,
+    "customfield_10065": null,
+    "customfield_10066": null,
+    "priority": {
+      "self": "https://wannaby.atlassian.net/rest/api/2/priority/4",
+      "iconUrl": "https://wannaby.atlassian.net/images/icons/priorities/minor.svg",
+      "name": "Normal",
+      "id": "4"
+    },
+    "customfield_10067": null,
+    "customfield_10068": null,
+    "customfield_10069": null,
+    "labels": [],
+    "timeestimate": 0,
+    "aggregatetimeoriginalestimate": null,
+    "versions": [],
+    "issuelinks": [],
+    "assignee": {
+      "self": "https://wannaby.atlassian.net/rest/api/2/user?accountId=5f6070093242e8006f4a8950",
+      "accountId": "5f6070093242e8006f4a8950",
+      "emailAddress": "kirill@wanna.by",
+      "avatarUrls": {
+        "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5f6070093242e8006f4a8950/f2c30f66-09a9-495e-aefd-03f0b3710f2a/48",
+        "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5f6070093242e8006f4a8950/f2c30f66-09a9-495e-aefd-03f0b3710f2a/24",
+        "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5f6070093242e8006f4a8950/f2c30f66-09a9-495e-aefd-03f0b3710f2a/16",
+        "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5f6070093242e8006f4a8950/f2c30f66-09a9-495e-aefd-03f0b3710f2a/32"
+      },
+      "displayName": "Kirill Pinchuk",
+      "active": true,
+      "timeZone": "Europe/Minsk",
+      "accountType": "atlassian"
+    },
+    "status": {
+      "self": "https://wannaby.atlassian.net/rest/api/2/status/10046",
+      "description": "",
+      "iconUrl": "https://wannaby.atlassian.net/",
+      "name": "In Progress",
+      "id": "10046",
+      "statusCategory": {
+        "self": "https://wannaby.atlassian.net/rest/api/2/statuscategory/4",
+        "id": 4,
+        "key": "indeterminate",
+        "colorName": "yellow",
+        "name": "In Progress"
+      }
+    },
+    "components": [],
+    "customfield_10050": null,
+    "customfield_10051": null,
+    "customfield_10052": null,
+    "customfield_10053": null,
+    "customfield_10054": null,
+    "customfield_10055": null,
+    "customfield_10056": null,
+    "customfield_10057": null,
+    "customfield_10058": null,
+    "customfield_10059": null,
+    "customfield_10049": null,
+    "aggregatetimeestimate": 0,
+    "creator": {
+      "self": "https://wannaby.atlassian.net/rest/api/2/user?accountId=5f6070093242e8006f4a8950",
+      "accountId": "5f6070093242e8006f4a8950",
+      "emailAddress": "kirill@wanna.by",
+      "avatarUrls": {
+        "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5f6070093242e8006f4a8950/f2c30f66-09a9-495e-aefd-03f0b3710f2a/48",
+        "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5f6070093242e8006f4a8950/f2c30f66-09a9-495e-aefd-03f0b3710f2a/24",
+        "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5f6070093242e8006f4a8950/f2c30f66-09a9-495e-aefd-03f0b3710f2a/16",
+        "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5f6070093242e8006f4a8950/f2c30f66-09a9-495e-aefd-03f0b3710f2a/32"
+      },
+      "displayName": "Kirill Pinchuk",
+      "active": true,
+      "timeZone": "Europe/Minsk",
+      "accountType": "atlassian"
+    },
+    "subtasks": [],
+    "customfield_10040": null,
+    "customfield_10041": null,
+    "customfield_10042": null,
+    "customfield_10043": null,
+    "reporter": {
+      "self": "https://wannaby.atlassian.net/rest/api/2/user?accountId=5f6070093242e8006f4a8950",
+      "accountId": "5f6070093242e8006f4a8950",
+      "emailAddress": "kirill@wanna.by",
+      "avatarUrls": {
+        "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5f6070093242e8006f4a8950/f2c30f66-09a9-495e-aefd-03f0b3710f2a/48",
+        "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5f6070093242e8006f4a8950/f2c30f66-09a9-495e-aefd-03f0b3710f2a/24",
+        "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5f6070093242e8006f4a8950/f2c30f66-09a9-495e-aefd-03f0b3710f2a/16",
+        "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5f6070093242e8006f4a8950/f2c30f66-09a9-495e-aefd-03f0b3710f2a/32"
+      },
+      "displayName": "Kirill Pinchuk",
+      "active": true,
+      "timeZone": "Europe/Minsk",
+      "accountType": "atlassian"
+    },
+    "customfield_10044": null,
+    "aggregateprogress": {
+      "progress": 3600,
+      "total": 3600,
+      "percent": 100
+    },
+    "customfield_10045": null,
+    "customfield_10046": null,
+    "customfield_10047": null,
+    "customfield_10048": null,
+    "customfield_10038": [],
+    "customfield_10039": null,
+    "progress": {
+      "progress": 3600,
+      "total": 3600,
+      "percent": 100
+    },
+    "votes": {
+      "self": "https://wannaby.atlassian.net/rest/api/2/issue/WEB-222/votes",
+      "votes": 0,
+      "hasVoted": false
+    },
+    "worklog": {
+      "startAt": 0,
+      "maxResults": 20,
+      "total": 1,
+      "worklogs": [
+        {
+          "self": "https://wannaby.atlassian.net/rest/api/2/issue/12760/worklog/10335",
+          "author": {
+            "self": "https://wannaby.atlassian.net/rest/api/2/user?accountId=5f6070093242e8006f4a8950",
+            "accountId": "5f6070093242e8006f4a8950",
+            "emailAddress": "kirill@wanna.by",
+            "avatarUrls": {
+              "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5f6070093242e8006f4a8950/f2c30f66-09a9-495e-aefd-03f0b3710f2a/48",
+              "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5f6070093242e8006f4a8950/f2c30f66-09a9-495e-aefd-03f0b3710f2a/24",
+              "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5f6070093242e8006f4a8950/f2c30f66-09a9-495e-aefd-03f0b3710f2a/16",
+              "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5f6070093242e8006f4a8950/f2c30f66-09a9-495e-aefd-03f0b3710f2a/32"
+            },
+            "displayName": "Kirill Pinchuk",
+            "active": true,
+            "timeZone": "Europe/Minsk",
+            "accountType": "atlassian"
+          },
+          "updateAuthor": {
+            "self": "https://wannaby.atlassian.net/rest/api/2/user?accountId=5f6070093242e8006f4a8950",
+            "accountId": "5f6070093242e8006f4a8950",
+            "emailAddress": "kirill@wanna.by",
+            "avatarUrls": {
+              "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5f6070093242e8006f4a8950/f2c30f66-09a9-495e-aefd-03f0b3710f2a/48",
+              "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5f6070093242e8006f4a8950/f2c30f66-09a9-495e-aefd-03f0b3710f2a/24",
+              "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5f6070093242e8006f4a8950/f2c30f66-09a9-495e-aefd-03f0b3710f2a/16",
+              "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5f6070093242e8006f4a8950/f2c30f66-09a9-495e-aefd-03f0b3710f2a/32"
+            },
+            "displayName": "Kirill Pinchuk",
+            "active": true,
+            "timeZone": "Europe/Minsk",
+            "accountType": "atlassian"
+          },
+          "comment": "manual sync with JIRA",
+          "created": "2021-03-11T14:26:27.143+0300",
+          "updated": "2021-03-11T14:26:27.143+0300",
+          "started": "2021-03-11T13:26:13.251+0300",
+          "timeSpent": "1h",
+          "timeSpentSeconds": 3600,
+          "id": "10335",
+          "issueId": "12760"
+        }
+      ]
+    },
+    "issuetype": {
+      "self": "https://wannaby.atlassian.net/rest/api/2/issuetype/10025",
+      "id": "10025",
+      "description": "Tasks track small, distinct pieces of work.",
+      "iconUrl": "https://wannaby.atlassian.net/secure/viewavatar?size=medium&avatarId=10318&avatarType=issuetype",
+      "name": "Task",
+      "subtask": false,
+      "avatarId": 10318,
+      "entityId": "17cfcf9e-cfd0-45b9-9ed6-d153a288ee27",
+      "hierarchyLevel": 0
+    },
+    "timespent": 3600,
+    "customfield_10030": null,
+    "customfield_10031": null,
+    "project": {
+      "self": "https://wannaby.atlassian.net/rest/api/2/project/10008",
+      "id": "10008",
+      "key": "WEB",
+      "name": "WEB",
+      "projectTypeKey": "software",
+      "simplified": true,
+      "avatarUrls": {
+        "48x48": "https://wannaby.atlassian.net/secure/projectavatar?pid=10008&avatarId=10418",
+        "24x24": "https://wannaby.atlassian.net/secure/projectavatar?size=small&s=small&pid=10008&avatarId=10418",
+        "16x16": "https://wannaby.atlassian.net/secure/projectavatar?size=xsmall&s=xsmall&pid=10008&avatarId=10418",
+        "32x32": "https://wannaby.atlassian.net/secure/projectavatar?size=medium&s=medium&pid=10008&avatarId=10418"
+      }
+    },
+    "customfield_10032": null,
+    "customfield_10033": null,
+    "aggregatetimespent": 3600,
+    "customfield_10034": null,
+    "customfield_10035": 16,
+    "customfield_10036": null,
+    "customfield_10037": null,
+    "customfield_10029": null,
+    "resolutiondate": null,
+    "workratio": -1,
+    "issuerestriction": {
+      "issuerestrictions": {},
+      "shouldDisplay": true
+    },
+    "watches": {
+      "self": "https://wannaby.atlassian.net/rest/api/2/issue/WEB-222/watchers",
+      "watchCount": 1,
+      "isWatching": true
+    },
+    "created": "2021-03-11T14:25:54.297+0300",
+    "customfield_10020": [
+      {
+        "id": 82,
+        "name": "WEB Sprint 7",
+        "state": "active",
+        "boardId": 18,
+        "goal": "",
+        "startDate": "2021-03-05T08:21:40.976Z",
+        "endDate": "2021-03-12T08:21:29.000Z"
+      }
+    ],
+    "customfield_10021": null,
+    "customfield_10022": null,
+    "customfield_10023": null,
+    "customfield_10024": null,
+    "customfield_10025": null,
+    "customfield_10016": null,
+    "customfield_10017": null,
+    "customfield_10018": {
+      "hasEpicLinkFieldDependency": false,
+      "showField": false,
+      "nonEditableReason": {
+        "reason": "PLUGIN_LICENSE_ERROR",
+        "message": "The Parent Link is only available to Jira Premium users."
+      }
+    },
+    "customfield_10019": "2|i008rf:",
+    "updated": "2021-03-11T14:26:27.191+0300",
+    "customfield_10090": null,
+    "customfield_10091": null,
+    "customfield_10092": null,
+    "customfield_10094": null,
+    "timeoriginalestimate": null,
+    "customfield_10095": null,
+    "customfield_10096": null,
+    "customfield_10097": null,
+    "description": "(x) https site\r\n(x) deploy with github action\r\n(x) full support for JIRA tracking: ETA, worklog comments\r\n(x) teambot ghcr container",
+    "customfield_10010": null,
+    "customfield_10014": null,
+    "timetracking": {
+      "remainingEstimate": "0m",
+      "timeSpent": "1h",
+      "remainingEstimateSeconds": 0,
+      "timeSpentSeconds": 3600
+    },
+    "customfield_10015": null,
+    "customfield_10005": null,
+    "customfield_10006": null,
+    "customfield_10007": null,
+    "security": null,
+    "customfield_10008": null,
+    "attachment": [],
+    "customfield_10009": null,
+    "summary": "JIRA integrate with teambot",
+    "customfield_10080": null,
+    "customfield_10081": null,
+    "customfield_10082": null,
+    "customfield_10083": null,
+    "customfield_10084": null,
+    "customfield_10085": null,
+    "customfield_10086": null,
+    "customfield_10087": null,
+    "customfield_10000": "{}",
+    "customfield_10088": null,
+    "customfield_10001": null,
+    "customfield_10089": null,
+    "customfield_10002": null,
+    "customfield_10003": null,
+    "customfield_10004": null,
+    "environment": null,
+    "duedate": null,
+    "comment": {
+      "comments": [],
+      "self": "https://wannaby.atlassian.net/rest/api/2/issue/12760/comment",
+      "maxResults": 0,
+      "total": 0,
+      "startAt": 0
+    }
+  }
+}

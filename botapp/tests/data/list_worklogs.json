@@ -1,0 +1,43 @@
+[
+  {
+    "self": "https://wannaby.atlassian.net/rest/api/2/issue/12760/worklog/10335",
+    "author": {
+      "self": "https://wannaby.atlassian.net/rest/api/2/user?accountId=5f6070093242e8006f4a8950",
+      "accountId": "5f6070093242e8006f4a8950",
+      "emailAddress": "kirill@wanna.by",
+      "avatarUrls": {
+        "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5f6070093242e8006f4a8950/f2c30f66-09a9-495e-aefd-03f0b3710f2a/48",
+        "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5f6070093242e8006f4a8950/f2c30f66-09a9-495e-aefd-03f0b3710f2a/24",
+        "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5f6070093242e8006f4a8950/f2c30f66-09a9-495e-aefd-03f0b3710f2a/16",
+        "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5f6070093242e8006f4a8950/f2c30f66-09a9-495e-aefd-03f0b3710f2a/32"
+      },
+      "displayName": "Kirill Pinchuk",
+      "active": true,
+      "timeZone": "Europe/Minsk",
+      "accountType": "atlassian"
+    },
+    "updateAuthor": {
+      "self": "https://wannaby.atlassian.net/rest/api/2/user?accountId=5f6070093242e8006f4a8950",
+      "accountId": "5f6070093242e8006f4a8950",
+      "emailAddress": "kirill@wanna.by",
+      "avatarUrls": {
+        "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5f6070093242e8006f4a8950/f2c30f66-09a9-495e-aefd-03f0b3710f2a/48",
+        "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5f6070093242e8006f4a8950/f2c30f66-09a9-495e-aefd-03f0b3710f2a/24",
+        "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5f6070093242e8006f4a8950/f2c30f66-09a9-495e-aefd-03f0b3710f2a/16",
+        "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5f6070093242e8006f4a8950/f2c30f66-09a9-495e-aefd-03f0b3710f2a/32"
+      },
+      "displayName": "Kirill Pinchuk",
+      "active": true,
+      "timeZone": "Europe/Minsk",
+      "accountType": "atlassian"
+    },
+    "comment": "manual sync with JIRA",
+    "created": "2021-03-11T14:26:27.143+0300",
+    "updated": "2021-03-11T14:26:27.143+0300",
+    "started": "2021-03-11T13:26:13.251+0300",
+    "timeSpent": "1h",
+    "timeSpentSeconds": 3600,
+    "id": "10335",
+    "issueId": "12760"
+  }
+]

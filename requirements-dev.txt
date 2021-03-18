@@ -1,5 +1,6 @@
+ipython==7.21.0
 pytest-tipsi-django==2.6.0
 pytest==6.2.2
-ipython==7.21.0
+requests-mock==1.8.0
 
 -r requirements.txt
