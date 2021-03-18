@@ -48,7 +48,7 @@ def test_01_parser(from_to):
     assert Worklog.objects.count() == 8
 
 
-@pytest.mark.xfail
+#@pytest.mark.xfail
 def test_02_skip_deletion(from_to):
     jl = JiraLoader()
     jl.sync(*from_to)
