@@ -5,11 +5,14 @@ import plotly.offline as opy
 from django.contrib import admin
 from django.contrib.admin.views.main import ChangeList
 from django.db.models import Count, Sum
-from django_orm_sugar import Q
+from django.http.response import HttpResponseRedirect
+from django.urls import path
 from django.utils.safestring import mark_safe
+from django_orm_sugar import Q
 
 from botapp.enums import ServiceType
 from botapp.models import Issue, ServiceAccount, Team, UserProfile, Worklog
+from botapp.tasks import sync_jira
 
 
 @admin.register(ServiceAccount)
@@ -119,6 +122,12 @@ class WorklogAdmin(admin.ModelAdmin):
     search_fields = ['description', 'issue__title']
     ordering = ['-work_date']
 
+    def get_urls(self):
+        info = self.model._meta.app_label, self.model._meta.model_name
+        name = "%s_%s_sync" % info
+        custom_urls = [path('sync', self.sync, name=name)]
+        return super().get_urls() + custom_urls
+
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         print(db_field)
         if db_field.name == "user_profile":
@@ -164,6 +173,10 @@ class WorklogAdmin(admin.ModelAdmin):
 
     def logged(self, obj):
         return '{:.1f}h'.format(obj.hours)
+
+    def sync(self, request):
+        sync_jira(last_days=1)
+        return HttpResponseRedirect('/admin/botapp/worklog/')
 
 
 class WorklogInline(admin.TabularInline):
