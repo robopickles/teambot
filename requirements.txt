@@ -14,4 +14,4 @@ reportlab==3.5.63
 requests==2.25.1
 safe-logger==1.6.0
 slackclient==2.9.3
-urllib3==1.26.3
+urllib3==1.26.5
