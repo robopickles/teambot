@@ -19,7 +19,7 @@ app.conf.beat_schedule = {
     'sync-jira-hourly': {
         'task': 'botapp.tasks.sync_jira',
         'schedule': crontab(minute=2),
-        'kwargs': {'last_days': 1},
+        'kwargs': {'last_days': 2},
     },
     # That worker will fetch screenshot monitor statistics
     'sync-screenshot-monitor-daily': {

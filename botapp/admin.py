@@ -175,7 +175,7 @@ class WorklogAdmin(admin.ModelAdmin):
         return '{:.1f}h'.format(obj.hours)
 
     def sync(self, request):
-        sync_jira(last_days=1)
+        sync_jira(last_days=2)
         return HttpResponseRedirect('/admin/botapp/worklog/')
 
 
