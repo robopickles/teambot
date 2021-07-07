@@ -202,6 +202,7 @@ class IssueAdmin(admin.ModelAdmin):
         'original_estimate',
         'description',
         'open_link',
+        'tags',
     ]
     readonly_fields = [
         'issue_id',

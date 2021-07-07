@@ -1,3 +1,4 @@
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 
 from botapp.enums import get_choices, IssueSystem, ServiceType, WorklogSystem
@@ -45,6 +46,7 @@ class Issue(models.Model):
 
     original_estimate = models.FloatField(null=True, blank=True)
     remaining_estimate = models.FloatField(null=True, blank=True)
+    tags = ArrayField(models.CharField(max_length=255), blank=True, default=list)
 
     class Meta:
         unique_together = ['issue_system', 'issue_id']

@@ -80,6 +80,7 @@ class JiraFetcher:
                 description=description or '',
                 original_estimate=self.get_original_estimate(j),
                 url='{}/browse/{}'.format(settings.JIRA_BASE_URL, issue_id),
+                tags=j['fields']['labels'],
             )
 
     def update_jira_issue(self, issue, issue_id):
