@@ -1,8 +1,9 @@
 from collections import defaultdict
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 
 import plotly.graph_objs as go
 import plotly.offline as opy
+from dateutil.relativedelta import relativedelta
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
@@ -10,7 +11,7 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django_orm_sugar import Q
 
-from botapp.models import Team, UserProfile, Worklog, Tag
+from botapp.models import Tag, Team, UserProfile, Worklog
 from gitapp.models import GitCommit
 
 
@@ -263,12 +264,19 @@ class TagsTimeView(View):
 
     def get(self, request):
         use_tags = set(x.name for x in Tag.objects.filter(use_tag=True))
-        m = 6
+        month = request.GET.get('month')
+        if month:
+            from_date = datetime.strptime(month, '%Y-%m') - relativedelta(months=1)
+        else:
+            now = datetime.now()
+            from_date = now - relativedelta(day=1, hour=0, minute=0, second=0, microsecond=0)
+
         logs = Worklog.objects.filter(
-            work_date__gte=date(2021, m, 1), work_date__lt=date(2021, m + 1, 1)
+            work_date__gte=from_date, work_date__lt=from_date + relativedelta(months=1)
         ).prefetch_related('issue', 'user_profile__team_set')
         teams = [x.name for x in Team.objects.all()]
-        c = {'teams': teams}
+        next_month = (from_date + relativedelta(months=2)).strftime('%Y-%m')
+        c = {'teams': teams, 'month': from_date.strftime('%Y-%m'), 'next_month': next_month}
 
         tags = defaultdict(lambda: {x: 0 for x in teams})
         for log in logs:

@@ -3,6 +3,13 @@
 {% block title %}Tracking by Tags{% endblock title %}
 
 {% block content %}
+
+<h2> Month: {{ month }} </h2>
+<div class="row">
+<a class="col-md btn btn-primary" href="?month={{month}}">Prev month</a>
+<a class="col-md btn btn-success" href="?month={{next_month}}">Next month</a>
+</div>
+
 <table class="table">
 
 <tr>
