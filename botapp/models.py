@@ -1,5 +1,6 @@
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
+from django.db.models import Q
 
 from botapp.enums import get_choices, IssueSystem, ServiceType, WorklogSystem
 
@@ -63,9 +64,20 @@ class Issue(models.Model):
         return '[{}] {}'.format(self.issue_id, self.title)
 
 
+class WorklogManager(models.QuerySet):
+    def between(self, from_date, to_date):
+        return self.filter(
+            Q(custom_work_date__gte=from_date, custom_work_date__lte=to_date)
+            | Q(custom_work_date__isnull=True, work_date__gte=from_date, work_date__lte=to_date)
+        )
+
+
 class Worklog(models.Model):
+    objects = models.Manager.from_queryset(WorklogManager)()
+
     uniq_id = models.CharField(max_length=255, null=True, blank=True, unique=True)
     work_date = models.DateField()
+    custom_work_date = models.DateField(null=True, blank=True)
     user_id = models.CharField(max_length=50)
     user_name = models.CharField(max_length=50)
     hours = models.FloatField(default=0)

@@ -141,11 +141,11 @@ class Report:
             self.gitlab_commits.append(commits_dict.get(k, []))
 
     def calc_tracker_stats(self):
-        qs = Worklog.objects.filter(
-            Q.work_date >= self.from_date,
-            Q.work_date <= self.to_date,
-            user_profile=self.user_profile,
-        ).order_by('work_date', 'from_datetime')
+        qs = (
+            Worklog.objects.between(self.from_date, self.to_date)
+            .filter(user_profile=self.user_profile)
+            .order_by('work_date', 'from_datetime')
+        )
 
         worklog_dict = {}
         for w in qs:
@@ -271,8 +271,8 @@ class TagsTimeView(View):
             now = datetime.now()
             from_date = now - relativedelta(day=1, hour=0, minute=0, second=0, microsecond=0)
 
-        logs = Worklog.objects.filter(
-            work_date__gte=from_date, work_date__lt=from_date + relativedelta(months=1)
+        logs = Worklog.objects.between(
+            from_date, from_date + relativedelta(months=1, days=-1)
         ).prefetch_related('issue', 'user_profile__team_set')
         teams = [x.name for x in Team.objects.all()]
         next_month = (from_date + relativedelta(months=2)).strftime('%Y-%m')

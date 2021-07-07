@@ -56,9 +56,11 @@ class IssueAction(BaseDateAction):
             SMonLoader().sync(from_date, to_date)
 
         users = {}
-        for w in Worklog.objects.filter(
-            Q.work_date >= from_date, Q.work_date <= to_date, Q.user_profile.active == True
-        ).prefetch_related('user_profile'):
+        for w in (
+            Worklog.objects.between(from_date, to_date)
+            .filter(Q.user_profile.active == True)
+            .prefetch_related('user_profile')
+        ):
             if w.user_profile and not w.description:
                 key = w.user_profile.id
                 if key in users:

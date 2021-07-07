@@ -98,10 +98,8 @@ class BaseWorklogLoader(ABC):
         batch = []
 
         if self.drop_old:
-            Worklog.objects.filter(
-                Q.work_date >= from_date,
-                Q.work_date <= to_date,
-                Q.worklog_system == self.worklog_system,
+            Worklog.objects.between(from_date, to_date).filter(
+                Q.worklog_system == self.worklog_system
             ).delete()
 
         issue_loader = IssueLoader(autoupdate=True)
@@ -146,10 +144,8 @@ class BaseWorklogLoader(ABC):
             )
             batch.append(worklog)
         if not self.drop_old:
-            all_worklogs = Worklog.objects.filter(
-                Q.work_date >= from_date,
-                Q.work_date <= to_date,
-                Q.worklog_system == self.worklog_system,
+            all_worklogs = Worklog.objects.between(from_date, to_date).filter(
+                Q.worklog_system == self.worklog_system
             )
             ids = set(x.id for x in batch)
 
