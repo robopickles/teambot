@@ -274,7 +274,7 @@ class TagsTimeView(View):
         logs = Worklog.objects.between(
             from_date, from_date + relativedelta(months=1, days=-1)
         ).prefetch_related('issue', 'user_profile__team_set')
-        teams = [x.name for x in Team.objects.all()]
+        teams = [x.name for x in Team.objects.all()] + ['No Team']
         next_month = (from_date + relativedelta(months=2)).strftime('%Y-%m')
         c = {'teams': teams, 'month': from_date.strftime('%Y-%m'), 'next_month': next_month}
 
@@ -287,7 +287,11 @@ class TagsTimeView(View):
             if not has_tags:
                 continue
             tag = has_tags.pop()
-            team = log.user_profile.team_set.first().name
+            team = log.user_profile.team_set.first()
+            if team:
+                team = team.name
+            else:
+                team = 'No Team'
             tags[tag][team] += log.hours
 
         c['tags'] = {}
