@@ -5,6 +5,7 @@ from abc import ABC, abstractmethod
 from datetime import datetime, timedelta
 from functools import cached_property
 
+import pytz
 import requests
 import upwork
 from django.conf import settings
@@ -67,6 +68,7 @@ class BaseWorklogLoader(ABC):
     worklog_system: WorklogSystem
     service_type: ServiceType
     log = logging.getLogger('django.server')
+    drop_old = False
 
     def __init__(self, command=None):
         self.command = command
@@ -95,10 +97,23 @@ class BaseWorklogLoader(ABC):
 
         batch = []
 
+        if self.drop_old:
+            Worklog.objects.filter(
+                Q.work_date >= from_date,
+                Q.work_date <= to_date,
+                Q.worklog_system == self.worklog_system,
+            ).delete()
+
         issue_loader = IssueLoader(autoupdate=True)
-        for (user_id, user_name, work_date, hours, memo, dt_range) in self.iter_fetched_report(
-            report
-        ):
+        for (
+            uniq_id,
+            user_id,
+            user_name,
+            work_date,
+            hours,
+            memo,
+            dt_range,
+        ) in self.iter_fetched_report(report):
             service_account = ServiceAccount.objects.filter(
                 service_type=self.service_type, uid=user_id
             ).first()
@@ -107,7 +122,11 @@ class BaseWorklogLoader(ABC):
 
             issue = issue_loader.get_issue_failsafe(memo)
 
-            worklog = Worklog(
+            if work_date < from_date or work_date > to_date:
+                print(f'SKIP: {user_name} {memo} {work_date=} {from_date=} {to_date=}')
+                continue
+
+            defaults = dict(
                 work_date=work_date,
                 user_id=user_id,
                 user_name=user_name,
@@ -119,22 +138,25 @@ class BaseWorklogLoader(ABC):
                 worklog_system=self.worklog_system,
                 user_profile=user_profile,
             )
-
+            worklog, created = Worklog.objects.update_or_create(uniq_id=uniq_id, defaults=defaults)
             self.log.info(
-                u'worklog: {}, {}, {}, {}, {}, {}'.format(
-                    user_id, user_name, work_date, hours, memo, dt_range
+                u'worklog: {} {}, {}, {}, {}, {}, {}'.format(
+                    uniq_id, user_id, user_name, work_date, hours, memo, dt_range
                 )
             )
-            if worklog.work_date >= from_date and worklog.work_date <= to_date:
-                batch.append(worklog)
+            batch.append(worklog)
+        if not self.drop_old:
+            all_worklogs = Worklog.objects.filter(
+                Q.work_date >= from_date,
+                Q.work_date <= to_date,
+                Q.worklog_system == self.worklog_system,
+            )
+            ids = set(x.id for x in batch)
 
-        # Drop all previous worklog
-        Worklog.objects.filter(
-            Q.work_date >= from_date,
-            Q.work_date <= to_date,
-            Q.worklog_system == self.worklog_system,
-        ).delete()
-        Worklog.objects.bulk_create(batch)
+            for wl in all_worklogs:
+                if wl.id not in ids:
+                    wl.delete()
+
         print('synced {} worklogs'.format(len(batch)))
 
     @abstractmethod
@@ -149,6 +171,7 @@ class BaseWorklogLoader(ABC):
 class UpworkLoader(BaseWorklogLoader):
     worklog_system = WorklogSystem.upwork
     service_type = ServiceType.upwork
+    drop_old = True
 
     def fetch_team_report(self, from_date, to_date):
         client = upwork.Client(
@@ -185,7 +208,7 @@ class UpworkLoader(BaseWorklogLoader):
                 memo = ''
 
             dt_range = (None, None)
-            yield user_id, user_name, work_date, hours, memo, dt_range
+            yield None, user_id, user_name, work_date, hours, memo, dt_range
 
     def get_col(self, upwork_row, index):
         """
@@ -209,6 +232,8 @@ class SMonLoader(BaseWorklogLoader):
     worklog_system = WorklogSystem.smon
     service_type = ServiceType.smon
 
+    drop_old = True
+
     def iter_fetched_report(self, report):
         for d in report:
             from_time = d['from']
@@ -223,7 +248,7 @@ class SMonLoader(BaseWorklogLoader):
                 datetime.fromtimestamp(from_time, timezone.utc),
                 datetime.fromtimestamp(to_time, timezone.utc),
             )
-            yield user_id, user_name, work_date, hours, memo, dt_range
+            yield None, user_id, user_name, work_date, hours, memo, dt_range
 
     def fetch_team_report(self, from_date, to_date):
         token = os.environ.get('SMON_TOKEN', '')
@@ -300,7 +325,11 @@ class JiraLoader(BaseWorklogLoader):
 
         for item in report:
             print(f'Item: {item}')
-            work_date = datetime.strptime(item['updated'], '%Y-%m-%dT%H:%M:%S.%f%z').date()
+            work_date = (
+                datetime.strptime(item['updated'], '%Y-%m-%dT%H:%M:%S.%f%z')
+                .astimezone(pytz.utc)
+                .date()
+            )
             user_id = item['updateAuthor']['accountId']
             user_name = item['updateAuthor']['displayName']
             hours = float(item['timeSpentSeconds'] / 60 / 60)
@@ -310,4 +339,4 @@ class JiraLoader(BaseWorklogLoader):
                 memo += f': {comment}'
 
             dt_range = (None, None)
-            yield user_id, user_name, work_date, hours, memo, dt_range
+            yield item['id'], user_id, user_name, work_date, hours, memo, dt_range

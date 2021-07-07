@@ -64,6 +64,7 @@ class Issue(models.Model):
 
 
 class Worklog(models.Model):
+    uniq_id = models.CharField(max_length=255, null=True, blank=True, unique=True)
     work_date = models.DateField()
     user_id = models.CharField(max_length=50)
     user_name = models.CharField(max_length=50)
@@ -84,4 +85,6 @@ class Worklog(models.Model):
             return self.description
 
     def __str__(self):
-        return '{}: {}, {}/{}'.format(self.user_name, self.description, self.work_date, self.hours)
+        return '[{}/{}]{}: {}, {}/{}'.format(
+            self.id, self.uniq_id, self.user_name, self.description, self.work_date, self.hours
+        )

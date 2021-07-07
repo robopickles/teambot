@@ -28,6 +28,8 @@ DEBUG = os.environ.get('DJANGO_DEBUG', False)
 
 ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost,example.com').split(',')
 
+ATOMIC_REQUESTS = True
+
 
 # Application definition
 

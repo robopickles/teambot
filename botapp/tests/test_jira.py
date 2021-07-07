@@ -20,6 +20,15 @@ def session_settings(session_settings):
     yield session_settings
 
 
+WORKLOG_DATA = json.loads(py_rel_path('./data/list_worklogs.json').read_text())
+
+
+def worklog_callback(req, ctx):
+    resp = WORKLOG_DATA.copy()
+    j = json.loads(req.body)
+    resp[0]['id'] = j['ids'][0]
+    return resp
+
 @pytest.fixture
 def mock_jira(requests_mock: Mocker):
     requests_mock.get(
@@ -28,7 +37,7 @@ def mock_jira(requests_mock: Mocker):
     )
     requests_mock.post(
         '/rest/api/latest/worklog/list',
-        json=json.loads(py_rel_path('./data/list_worklogs.json').read_text()),
+        json=worklog_callback
     )
     requests_mock.get(
         re.compile('/rest/api/latest/issue/.*'),
