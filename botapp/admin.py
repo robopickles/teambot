@@ -210,6 +210,7 @@ class IssueAdmin(admin.ModelAdmin):
         'title',
         'description',
         'jira_link',
+        'tags',
         'original_estimate',
         'total_hours_worked',
         'pie_chart',

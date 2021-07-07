@@ -1,5 +1,5 @@
 import os
-from functools import cached_property
+from functools import cached_property, lru_cache
 
 import requests
 from django.conf import settings
@@ -21,6 +21,7 @@ class JiraFetcher:
     def api_url(self):
         return f'{settings.JIRA_BASE_URL}/rest/api/latest'
 
+    @lru_cache
     def fetch_jira_issue(self, issue_id):
         s = requests.session()
         issue_url = '{}/rest/api/latest/issue/{}'.format(settings.JIRA_BASE_URL, issue_id)
@@ -67,11 +68,20 @@ class JiraFetcher:
         if orig_eta_hours:
             return orig_eta_hours
 
+    def get_labels(self, issue):
+        labels = issue['fields']['labels']
+        if parent := issue['fields'].get('parent'):
+            p = self.fetch_jira_issue(parent['id'])
+            labels.extend(p['fields']['labels'])
+            labels = list(set(labels))
+        return labels
+
     def create_jira_issue(self, issue_id):
         j = self.fetch_jira_issue(issue_id)
         if 'fields' in j:
             description = j['fields']['description']
             summary = j['fields']['summary']
+            labels = self.get_labels(j)
             print('creating issue: {}'.format(issue_id))
             return Issue.objects.create(
                 issue_system=IssueSystem.jira,
@@ -80,7 +90,7 @@ class JiraFetcher:
                 description=description or '',
                 original_estimate=self.get_original_estimate(j),
                 url='{}/browse/{}'.format(settings.JIRA_BASE_URL, issue_id),
-                tags=j['fields']['labels'],
+                tags=labels,
             )
 
     def update_jira_issue(self, issue, issue_id):
@@ -94,4 +104,5 @@ class JiraFetcher:
             issue.title = summary
             issue.description = description or ''
             issue.original_estimate = self.get_original_estimate(j)
+            issue.tags = self.get_labels(j)
             issue.save()
