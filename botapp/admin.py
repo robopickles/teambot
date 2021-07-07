@@ -11,7 +11,7 @@ from django.utils.safestring import mark_safe
 from django_orm_sugar import Q
 
 from botapp.enums import ServiceType
-from botapp.models import Issue, ServiceAccount, Team, UserProfile, Worklog
+from botapp.models import Issue, ServiceAccount, Team, UserProfile, Worklog, Tag
 from botapp.tasks import sync_jira
 
 
@@ -266,3 +266,8 @@ class TeamAdmin(admin.ModelAdmin):
 
     def team_members(self, obj):
         return obj.user_profiles.all().count()
+
+
+@admin.register(Tag)
+class TagAdmin(admin.ModelAdmin):
+    list_display = ['name', 'use_tag']

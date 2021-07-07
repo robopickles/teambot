@@ -1,3 +1,4 @@
+from collections import defaultdict
 from datetime import date, timedelta
 
 import plotly.graph_objs as go
@@ -9,7 +10,7 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django_orm_sugar import Q
 
-from botapp.models import Team, UserProfile, Worklog
+from botapp.models import Team, UserProfile, Worklog, Tag
 from gitapp.models import GitCommit
 
 
@@ -231,3 +232,58 @@ class DashboardView(View):
             reports.append(Report(u, from_date, to_date))
 
         return reports
+
+
+USE_TAGS = set(
+    [
+        'backend_maintenance',
+        'backend_scaling',
+        'batch_upload',
+        'body_labeling',
+        'client_demo',
+        'datawanna',
+        'demo',
+        'due_diligence',
+        'labeler',
+        'licensing_P0',
+        'metrics',
+        'occlusions',
+        'public_sdk',
+        'q3_not_planned',
+        'sdk',
+        'studio_maintenance',
+        'technical_debt',
+    ]
+)
+
+
+@method_decorator(login_required, name='dispatch')
+class TagsTimeView(View):
+    template_name = 'tags.html'
+
+    def get(self, request):
+        use_tags = set(x.name for x in Tag.objects.filter(use_tag=True))
+        m = 6
+        logs = Worklog.objects.filter(
+            work_date__gte=date(2021, m, 1), work_date__lt=date(2021, m + 1, 1)
+        ).prefetch_related('issue', 'user_profile__team_set')
+        teams = [x.name for x in Team.objects.all()]
+        c = {'teams': teams}
+
+        tags = defaultdict(lambda: {x: 0 for x in teams})
+        for log in logs:
+            if not log.issue:
+                continue
+
+            has_tags = set(log.issue.tags) & use_tags
+            if not has_tags:
+                continue
+            tag = has_tags.pop()
+            team = log.user_profile.team_set.first().name
+            tags[tag][team] += log.hours
+
+        c['tags'] = {}
+        for tag, data in tags.items():
+            c['tags'][tag] = [data[x] for x in c['teams']]
+
+        return render(request, self.template_name, c)

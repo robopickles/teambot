@@ -16,10 +16,11 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 
-from botapp.views import DashboardView
+from botapp.views import DashboardView, TagsTimeView
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^agile/', include('agileapp.urls')),
+    url(r'^tags_time/', TagsTimeView.as_view()),
     url(r'^$', DashboardView.as_view()),
 ]

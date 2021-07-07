@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Tracking by Tags{% endblock title %}
+
+{% block content %}
+<table class="table">
+
+<tr>
+  <th>Tag</th>
+  {% for team in teams %}
+  <th>{{team}}</th>
+  {% endfor %}
+</tr>
+
+{% for tag, value in tags.items %}
+<tr>
+  <td>
+    {{ tag }}
+  </td>
+  {% for val in value %}
+  <td>
+    {{ val|floatformat }}
+  </td>
+  {% endfor %}
+  <td>
+</tr>
+{% endfor %}
+</table>
+
+{% endblock content %}

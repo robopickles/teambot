@@ -21,6 +21,11 @@ class Team(models.Model):
     user_profiles = models.ManyToManyField(UserProfile)
 
 
+class Tag(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+    use_tag = models.BooleanField(default=True)
+
+
 class ServiceAccount(models.Model):
     """
     Reference for JIRA, Upwork or other users
