@@ -110,6 +110,7 @@ class WorklogAdmin(admin.ModelAdmin):
         'user',
         'work_date',
         'custom_work_date',
+        'remote_updated_at',
         'week_day',
         'logged',
         'orig_estimate',

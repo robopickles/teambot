@@ -10,6 +10,8 @@ indent_style = space
 indent_size = 4
 emacs_py_project = .
 emacs_py_save_touch = uwsgi.ini
+emacs_py_test_command = docker exec -i teambot_web_1 pytest
+emacs_py_project_root = .
 
 [frontend/**.{js,jsx}]
 indent_style = space

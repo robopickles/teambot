@@ -29,16 +29,14 @@ def worklog_callback(req, ctx):
     resp[0]['id'] = j['ids'][0]
     return resp
 
+
 @pytest.fixture
 def mock_jira(requests_mock: Mocker):
     requests_mock.get(
         '/rest/api/latest/worklog/updated?since=1614556800000',
         json=json.loads(py_rel_path('./data/worklogs.json').read_text()),
     )
-    requests_mock.post(
-        '/rest/api/latest/worklog/list',
-        json=worklog_callback
-    )
+    requests_mock.post('/rest/api/latest/worklog/list', json=worklog_callback)
     requests_mock.get(
         re.compile('/rest/api/latest/issue/.*'),
         json=json.loads(py_rel_path('./data/jira_issue.json').read_text()),
@@ -57,7 +55,6 @@ def test_01_parser(from_to):
     assert Worklog.objects.count() == 8
 
 
-#@pytest.mark.xfail
 def test_02_skip_deletion(from_to):
     jl = JiraLoader()
     jl.sync(*from_to)
@@ -65,3 +62,4 @@ def test_02_skip_deletion(from_to):
     f = Worklog.objects.order_by('id').first()
     jl.sync(*from_to)
     f.refresh_from_db()
+    assert f.remote_updated_at

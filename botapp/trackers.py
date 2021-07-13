@@ -2,8 +2,10 @@ import logging
 import os
 import re
 from abc import ABC, abstractmethod
-from datetime import datetime, timedelta
+from dataclasses import dataclass, field
+from datetime import date, datetime, timedelta
 from functools import cached_property
+from typing import Iterator, Optional, Tuple, Union
 
 import pytz
 import requests
@@ -16,6 +18,18 @@ from botapp.enums import IssueSystem, ServiceType, WorklogSystem
 from botapp.factories import ServiceAccountFactory
 from botapp.jira_util import JiraFetcher
 from botapp.models import Issue, ServiceAccount, UserProfile, Worklog
+
+
+@dataclass
+class WorklogInfo:
+    uniq_id: Union[None, str, int]
+    user_id: int
+    user_name: str
+    work_date: date
+    hours: float
+    memo: Optional[str]
+    dt_range: Tuple[Optional[datetime], Optional[datetime]]
+    remote_updated_at: Optional[datetime] = field(default=None)
 
 
 class IssueLoader:
@@ -103,45 +117,38 @@ class BaseWorklogLoader(ABC):
             ).delete()
 
         issue_loader = IssueLoader(autoupdate=True)
-        for (
-            uniq_id,
-            user_id,
-            user_name,
-            work_date,
-            hours,
-            memo,
-            dt_range,
-        ) in self.iter_fetched_report(report):
+        for info in self.iter_fetched_report(report):
             service_account = ServiceAccount.objects.filter(
-                service_type=self.service_type, uid=user_id
+                service_type=self.service_type, uid=info.user_id
             ).first()
 
             user_profile = service_account.user_profile if service_account else None
 
-            issue = issue_loader.get_issue_failsafe(memo)
+            issue = issue_loader.get_issue_failsafe(info.memo)
 
-            if work_date < from_date or work_date > to_date:
-                print(f'SKIP: {user_name} {memo} {work_date=} {from_date=} {to_date=}')
+            if info.work_date < from_date or info.work_date > to_date:
+                print(
+                    f'SKIP: {info.user_name} {info.memo} {info.work_date=} {from_date=} {to_date=}'
+                )
                 continue
 
             defaults = dict(
-                work_date=work_date,
-                user_id=user_id,
-                user_name=user_name,
-                hours=hours,
-                description=memo,
+                work_date=info.work_date,
+                user_id=info.user_id,
+                user_name=info.user_name,
+                hours=info.hours,
+                description=info.memo,
                 issue=issue,
-                from_datetime=dt_range[0],
-                to_datetime=dt_range[1],
+                from_datetime=info.dt_range[0],
+                to_datetime=info.dt_range[1],
                 worklog_system=self.worklog_system,
                 user_profile=user_profile,
+                remote_updated_at=info.remote_updated_at,
             )
-            worklog, created = Worklog.objects.update_or_create(uniq_id=uniq_id, defaults=defaults)
-            self.log.info(
-                u'worklog: {} {}, {}, {}, {}, {}, {}'.format(
-                    uniq_id, user_id, user_name, work_date, hours, memo, dt_range
-                )
+            worklog, created = Worklog.objects.update_or_create(
+                uniq_id=info.uniq_id, defaults=defaults
             )
+            self.log.info(f'worklog: {info}')
             batch.append(worklog)
         if not self.drop_old:
             all_worklogs = Worklog.objects.between(from_date, to_date).filter(
@@ -156,7 +163,7 @@ class BaseWorklogLoader(ABC):
         print('synced {} worklogs'.format(len(batch)))
 
     @abstractmethod
-    def iter_fetched_report(self, report):
+    def iter_fetched_report(self, report) -> Iterator[WorklogInfo]:
         raise NotImplementedError()
 
     @abstractmethod
@@ -204,7 +211,7 @@ class UpworkLoader(BaseWorklogLoader):
                 memo = ''
 
             dt_range = (None, None)
-            yield None, user_id, user_name, work_date, hours, memo, dt_range
+            yield WorklogInfo(None, user_id, user_name, work_date, hours, memo, dt_range)
 
     def get_col(self, upwork_row, index):
         """
@@ -244,7 +251,7 @@ class SMonLoader(BaseWorklogLoader):
                 datetime.fromtimestamp(from_time, timezone.utc),
                 datetime.fromtimestamp(to_time, timezone.utc),
             )
-            yield None, user_id, user_name, work_date, hours, memo, dt_range
+            yield WorklogInfo(None, user_id, user_name, work_date, hours, memo, dt_range)
 
     def fetch_team_report(self, from_date, to_date):
         token = os.environ.get('SMON_TOKEN', '')
@@ -321,11 +328,10 @@ class JiraLoader(BaseWorklogLoader):
 
         for item in report:
             print(f'Item: {item}')
-            work_date = (
-                datetime.strptime(item['updated'], '%Y-%m-%dT%H:%M:%S.%f%z')
-                .astimezone(pytz.utc)
-                .date()
-            )
+            remote_updated_at = datetime.strptime(
+                item['updated'], '%Y-%m-%dT%H:%M:%S.%f%z'
+            ).astimezone(pytz.utc)
+            work_date = remote_updated_at.date()
             user_id = item['updateAuthor']['accountId']
             user_name = item['updateAuthor']['displayName']
             hours = float(item['timeSpentSeconds'] / 60 / 60)
@@ -335,4 +341,6 @@ class JiraLoader(BaseWorklogLoader):
                 memo += f': {comment}'
 
             dt_range = (None, None)
-            yield item['id'], user_id, user_name, work_date, hours, memo, dt_range
+            yield WorklogInfo(
+                item['id'], user_id, user_name, work_date, hours, memo, dt_range, remote_updated_at
+            )

@@ -78,6 +78,7 @@ class Worklog(models.Model):
     uniq_id = models.CharField(max_length=255, null=True, blank=True, unique=True)
     work_date = models.DateField()
     custom_work_date = models.DateField(null=True, blank=True)
+    remote_updated_at = models.DateTimeField(null=True, blank=True)
     user_id = models.CharField(max_length=50)
     user_name = models.CharField(max_length=50)
     hours = models.FloatField(default=0)
